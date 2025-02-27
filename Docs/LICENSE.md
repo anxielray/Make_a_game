@@ -1,6 +1,6 @@
 MIT License
 
-Copyright &copy; 2025 
+Copyright &copy; 2025  <span style="color=yellow">[Raymond]("https://github.com/anxielray"), [Clifford]("https://Doc-Scripter")</span>
 
 ````sh
 Permission is hereby granted, free of charge, to any person obtaining a copy  
@@ -9,12 +9,10 @@ in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell  
 copies of the Software, and to permit persons to whom the Software is  
 furnished to do so, subject to the following conditions:  
-```
 
 The above copyright notice and this permission notice shall be included in all  
 copies or substantial portions of the Software.  
 
-```sh
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,  
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  
@@ -23,8 +21,5 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  
 SOFTWARE.  
 ```
----
 
-### **Developers**  
-- [Raymond](https://github.com/anxielray)  
-- [Clifford](https://Doc-Scripter)
+---
