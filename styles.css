@@ -1,0 +1,16 @@
+body{
+    background-color: aquamarine;
+    justify-content: center;
+    align-items: center;
+    margin: 0%;
+    height: 10em;
+    /* color: g */
+
+
+}
+
+#game_canvas{
+    border: 1px solid black;
+    /* height: 25.5em;
+    width: 38.4em; */
+}
