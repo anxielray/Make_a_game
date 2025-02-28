@@ -1,10 +1,12 @@
-const canvas = document.getElementById("game_canvas");
-const context = canvas.getContext("2d");
+document.addEventListener("DOMContentLoaded",function(){
 
-canvas.width = 400;
-canvas.height = 240;
-
-const paddle = {
+    const canvas = document.getElementById("game_canvas");
+    const context = canvas.getContext("2d");
+    
+    canvas.width = 800;
+    canvas.height = 600;
+    
+    const paddle = {
   width: 75,
   height: 20,
   color: "#ff0000",
@@ -19,13 +21,13 @@ const paddle = {
     );
   },
   move: function (direction) {
-    const step = 7;
-    if (direction === "left" && this.x > 0) {
-      this.x -= step;
-    } else if (direction === "right" && this.x < canvas.width - this.width) {
-      this.x += step;
-    }
-  },
+      const step = 7;
+      if (direction === "left" && this.x > 0) {
+          this.x -= step;
+        } else if (direction === "right" && this.x < canvas.width - this.width) {
+            this.x += step;
+        }
+    },
 };
 
 const ball = {
@@ -36,34 +38,34 @@ const ball = {
   dy: -2,
   color: "#0000ff",
   draw: function () {
-    context.beginPath();
-    context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    context.fillStyle = this.color;
-    context.fill();
-    context.closePath();
-  },
+      context.beginPath();
+      context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      context.fillStyle = this.color;
+      context.fill();
+      context.closePath();
+    },
 };
 function clearCanvas() {
-  context.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, 0, canvas.width, canvas.height);
 }
 function update() {
-  clearCanvas();
-  paddle.draw();
+    clearCanvas();
+    paddle.draw();
   ball.draw();
   drawBricks();
 }
 
 document.addEventListener("keydown", function (event) {
-  if (event.key === "ArrowLeft") {
+    if (event.key === "ArrowLeft") {
     paddle.move("left");
   } else if (event.key === "ArrowRight") {
     paddle.move("right");
-  }
+}
   update();
 });
 
 let bricks = [];
-let bricksRowCount = 5;
+let bricksRowCount = 3;
 let bricksColumnCount = 4;
 let brickWidth = 75;
 let brickHeight = 20;
@@ -72,29 +74,29 @@ let brickOffsetLeft = 20;
 let brickOffsetTop = 10;
 
 for (let i = 0; i < bricksColumnCount; i++) {
-  bricks[i] = [];
-  for (let j = 0; j < bricksRowCount; j++) {
-    bricks[i][j] = { x: 0, y: 0, status: 1 };
-  }
+    bricks[i] = [];
+    for (let j = 0; j < bricksRowCount; j++) {
+        bricks[i][j] = { x: 0, y: 0, status: 1 };
+    }
 }
 
 //bricks drawing logic
 function drawBricks() {
-  for (let i = 0; i < bricksColumnCount; i++) {
-    for (let j = 0; j < bricksRowCount; j++) {
-      if (bricks[i][j].status === 1) {
-        const brickX = (i * (brickWidth + brickPadding)) + brickOffsetLeft;
-        const brickY = (j * (brickHeight + brickPadding)) + brickOffsetTop;
-        bricks[i][j].x = brickX;
-        bricks[i][j].y = brickY;
-        context.beginPath();
-        context.rect(brickX, brickY, brickWidth, brickHeight);
-        context.fillStyle = "#008000";
-        context.fill();
-        context.closePath();
-      }
+    for (let i = 0; i < bricksColumnCount; i++) {
+        for (let j = 0; j < bricksRowCount; j++) {
+            if (bricks[i][j].status === 1) {
+                const brickX = (i * (brickWidth + brickPadding)) + brickOffsetLeft;
+                const brickY = (j * (brickHeight + brickPadding)) + brickOffsetTop;
+                bricks[i][j].x = brickX;
+                bricks[i][j].y = brickY;
+                context.beginPath();
+                context.rect(brickX, brickY, brickWidth, brickHeight);
+                context.fillStyle = "#008000";
+                context.fill();
+                context.closePath();
+            }
+        }
     }
-  }
 }
 
 // update();
@@ -105,12 +107,13 @@ function draw(){
     ball.draw();
     paddle.draw();
     drawBricks();
-
+    brickCollision();
+    
     //update ball position
     ball.x+=ball.dx;
     ball.y+=ball.dy;
-
-    //collision logic
+    
+    //ball collision logic
     if (ball.x+ball.dx>canvas.width-ball.radius||ball.x+ball.dx<ball.radius){
         ball.dx=-ball.dx;
     }
@@ -126,4 +129,20 @@ function draw(){
     }
     requestAnimationFrame(draw)
 }
-draw();
+    //brick collision logic
+    function brickCollision(){
+        for (let i = 0; i < bricksColumnCount; i++) {
+            for (let j = 0; j < bricksRowCount; j++) {
+                const b = bricks[i][j];
+                if (b.status===1){
+                    if (ball.x > b.x && ball.x < b.x + brickWidth && ball.y>b.y&&ball.y<b.y+brickHeight){
+                        ball.dy=-ball.dy;
+                        b.status=0;
+                    }
+                }
+            }
+        }
+    }
+    
+    draw();
+})
