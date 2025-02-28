@@ -1,254 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Brick Breaker</title>
-    <style>
-        body {
-            text-align: center;
-            background-color: #222;
-            color: white;
-        }
-        #game-container {
-            position: relative;
-            width: 600px;
-            height: 400px;
-            background-color: black;
-            margin: auto;
-            overflow: hidden;
-        }
-        .paddle {
-            position: absolute;
-            width: 100px;
-            height: 10px;
-            background-color: white;
-            bottom: 10px;
-            left: 250px;
-        }
-        .ball {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: red;
-            border-radius: 50%;
-            bottom: 50px;
-            left: 295px;
-        }
-        .brick {
-            position: absolute;
-            width: 50px;
-            height: 20px;
-            background-color: blue;
-        }
-        .hidden {
-            display: none;
-        }
-        #pause-menu {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .instructions {
-            animation: bounce 1s infinite;
-            color: white;
-            text-align: center;
-            padding: 10px;
-        }
-        .heart {
-            color: red;
-            font-size: 24px;
-            margin: 0 5px;
-            transition: opacity 0.3s ease;
-        }
-        .heart.lost {
-            opacity: 0.2;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-    </style>
-</head>
-<body>
-
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
     <h1>Brick Breaker</h1>
     <div id="game-container">
-        <div class="paddle"></div>
-        <div class="ball"></div>
-        <div id="pause-menu" class="hidden">
-            <h2>Paused</h2>
-            <button onclick="resumeGame()">Continue</button>
-            <button onclick="restartGame()">Restart</button>
-        </div>
+      <div class="paddle"></div>
+      <div class="ball"></div>
+      <div id="pause-menu" class="hidden">
+        <h2>Paused</h2>
+        <button onclick="resumeGame()">Continue</button>
+        <button onclick="restartGame()">Restart</button>
+      </div>
     </div>
     <p>Score: <span id="score">0</span></p>
     <div class="instructions">
-        Break All Bricks! Use ← → to Move
-        <div id="lives-container">
-            <span class="heart">❤️</span>
-            <span class="heart">❤️</span>
-            <span class="heart">❤️</span>
-        </div>
+      Break All Bricks! Use ← → to Move
+      <div id="lives-container">
+        <span class="heart">❤️</span>
+        <span class="heart">❤️</span>
+        <span class="heart">❤️</span>
+      </div>
     </div>
-
-    <script>
-        const gameContainer = document.getElementById("game-container");
-        const paddle = document.querySelector(".paddle");
-        const ball = document.querySelector(".ball");
-        const pauseMenu = document.getElementById("pause-menu");
-        const scoreDisplay = document.getElementById("score");
-        const livesDisplay = document.getElementById("lives");
-
-        let ballX = 295, ballY = 50, ballDX = 2, ballDY = 2;
-        let paddleX = 250;
-        let isPaused = false;
-        let score = 0;
-        let lives = 3;
-
-        // Create bricks
-        function createBricks() {
-            const rows = 5, cols = 10;
-            for (let i = 0; i < rows; i++) {
-                for (let j = 0; j < cols; j++) {
-                    const brick = document.createElement("div");
-                    brick.classList.add("brick");
-                    brick.style.left = `${j * 55 + 10}px`;
-                    brick.style.top = `${i * 25 + 10}px`;
-                    gameContainer.appendChild(brick);
-                }
-            }
-        }
-
-        createBricks();
-
-        // Paddle movement
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "ArrowLeft" && paddleX > 0) {
-                paddleX -= 20;
-            } else if (e.key === "ArrowRight" && paddleX < 500) {
-                paddleX += 20;
-            } else if (e.key === "p") {
-                togglePause();
-            }
-            paddle.style.left = `${paddleX}px`;
-        });
-
-        function togglePause() {
-            isPaused = !isPaused;
-            pauseMenu.classList.toggle("hidden", !isPaused);
-            if (!isPaused) requestAnimationFrame(update);
-        }
-
-        function resumeGame() {
-            togglePause();
-        }
-
-        function restartGame() {
-            location.reload();
-        }
-
-        function update() {
-            if (isPaused) return;
-
-            ballX += ballDX;
-            ballY += ballDY;
-
-            // Wall collisions
-            if (ballX <= 0 || ballX >= 590) ballDX *= -1;
-            if (ballY <= 0) ballDY *= -1;
-
-            // Paddle collision
-            if (
-                ballY >= 380 &&
-                ballX >= paddleX &&
-                ballX <= paddleX + 100
-            ) {
-                // Force the ball to always go upward after paddle hit
-                ballDY = -Math.abs(ballDY);
-                
-                // Optionally adjust x direction based on where the ball hits the paddle
-                let hitPoint = (ballX - paddleX) / 100;
-                ballDX = 5 * (hitPoint - 0.5); // This gives a spread between -2.5 to 2.5
-            }
-
-            // Bottom collision (lose a life)
-            if (ballY > 400) {
-                lives--;
-                livesDisplay.textContent = lives;
-                if (lives === 0) {
-                    alert("Game Over!");
-                    restartGame();
-                } else {
-                    ballX = 295;
-                    ballY = 50;
-                    ballDX = 2;
-                    ballDY = 2;
-                }
-            }
-
-            // Brick collision
-            document.querySelectorAll(".brick").forEach((brick) => {
-                const brickRect = brick.getBoundingClientRect();
-                const ballRect = ball.getBoundingClientRect();
-
-                if (
-                    ballRect.left < brickRect.right &&
-                    ballRect.right > brickRect.left &&
-                    ballRect.top < brickRect.bottom &&
-                    ballRect.bottom > brickRect.top
-                ) {
-                    brick.remove();
-                    ballDY *= -1;
-                    score += 10;
-                    scoreDisplay.textContent = score;
-                }
-            });
-
-            ball.style.left = `${ballX}px`;
-            ball.style.top = `${ballY}px`;
-
-            requestAnimationFrame(update);
-        }
-
-        function updateLives() {
-            const hearts = document.querySelectorAll('.heart');
-            for (let i = 0; i < hearts.length; i++) {
-                if (i < lives) {
-                    hearts[i].classList.remove('lost');
-                } else {
-                    hearts[i].classList.add('lost');
-                }
-            }
-        }
-
-        function loseLife() {
-            lives--;
-            updateLives();
-            if (lives === 0) {
-                alert("Game Over!");
-                restartGame();
-            } else {
-                ballX = 295;
-                ballY = 50;
-                ballDX = 2;
-                ballDY = 2;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateLives();
-            requestAnimationFrame(update);
-        });
-
-        requestAnimationFrame(update);
-    </script>
-
-</body>
+    <script src="game.js"></script>
+  </body>
 </html>
