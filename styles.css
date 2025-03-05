@@ -1,16 +1,33 @@
-body{
-    background-color: aquamarine;
-    justify-content: center;
-    align-items: center;
-    margin: 0%;
-    height: 10em;
-    /* color: g */
-
-
-}
-
-#game_canvas{
-    border: 1px solid black;
-    /* height: 25.5em;
-    width: 38.4em; */
-}
+body {
+    margin: 0;
+    padding: 0;
+  }
+  #game {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    border: 1px solid #000;
+    background-color: #eee;
+    overflow: hidden;
+    margin: 20px auto;
+  }
+  #paddle {
+    position: absolute;
+    width: 75px;
+    height: 20px;
+    background-color: #ff0000;
+    bottom: 0;
+  }
+  #ball {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #0000ff;
+    border-radius: 50%;
+  }
+  .brick {
+    position: absolute;
+    width: 75px;
+    height: 20px;
+    background-color: #008000;
+  }
