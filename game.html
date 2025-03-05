@@ -9,12 +9,18 @@
   <body>
     <h1>Brick Breaker</h1>
     <div id="game-container">
-      <div class="paddle"></div>
-      <div class="ball"></div>
+      <div class="ball-and-paddle">
+
+        <div class="paddle"></div>
+        <div class="ball"></div>
+      </div>
       <div id="pause-menu" class="hidden">
-        <h2>Paused</h2>
-        <button onclick="resumeGame()">Continue</button>
-        <button onclick="restartGame()">Restart</button>
+        <div class="pause-menu">
+          <h2>Paused</h2>
+          <div class="pause-menu header"></div>
+          <button id="continueButton" onclick="resumeGame()">Continue</button>
+          <button id="restartButton" onclick="restartGame()">Restart</button>
+        </div>
       </div>
     </div>
     <p>Score: <span id="score">0</span></p>
