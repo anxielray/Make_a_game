@@ -19,10 +19,16 @@ let spaceEnabled = true;
 
 // === function create bricks for the game ===
 function createBricks() {
-  const rows = 5,
-    cols = 10;
+  const rows = 5;
+  // === get the width size of the game container to use as the column size for responsiveness
+  const game_width = document.getElementById("game-container");
+  // const computed_style = getComputedStyle(game_width);
+  // const col = computed_style.width;
+  const colWidth = col.offsetWidth / 10;
+  // const colWidth = col / 10;
   for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
+    for (let j = 0; j < colWidth; j++) {
+
       const brick = document.createElement("div");
       brick.classList.add("brick");
       brick.style.left = `${j * 55 + 10}px`;
@@ -63,9 +69,9 @@ document.addEventListener("keydown", (e) => {
 function togglePause() {
   isPaused = !isPaused;
 
-//   pauseMenu.classList.toggle("hidden", !isPaused);
-pauseMenu.style.display = "block";
-//   if (!isPaused) requestAnimationFrame(update);
+  //   pauseMenu.classList.toggle("hidden", !isPaused);
+  pauseMenu.style.display = "block";
+  //   if (!isPaused) requestAnimationFrame(update);
 }
 
 function resumeGame() {
@@ -95,7 +101,6 @@ function update() {
 
     // Paddle collision
     if (ballY >= 380 && ballX >= paddleX && ballX <= paddleX + 100) {
-
       // Force the ball to always go upward after paddle hit
       ballDY = -Math.abs(ballDY);
 
@@ -186,22 +191,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function showPauseMenu() {
   gameState = "paused";
-//   const continueButton = document.querySelector(".continueButton");
-//   const restartButton = document.querySelector(".restartButton");
+  //   const continueButton = document.querySelector(".continueButton");
+  //   const restartButton = document.querySelector(".restartButton");
   const menuText = document.querySelector(".pause-menu");
   const controlButtons = document.querySelector(".pause-menu");
   controlButtons.classList.add("visible");
   menuText.classList.add("show");
-//   setTimeout(() => {
-//     continueButton.classList.add("show");
-//     restartButton.classList.add("show");
-//   }, 100);
+  //   setTimeout(() => {
+  //     continueButton.classList.add("show");
+  //     restartButton.classList.add("show");
+  //   }, 100);
 }
 
 // === function to hide the pause menu ===
 function hidePauseMenu() {
-
-
   const menuText = document.querySelector(".pause-menu");
   menuText.classList.remove("show");
   controlButtons.classList.remove("visible");

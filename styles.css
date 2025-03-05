@@ -46,8 +46,8 @@ body {
   
   #game-container {
     position: relative;
-    width: 600px;
-    height: 400px;
+    width: 900px;
+    height: 800px;
     background-color: black;
     margin: auto;
     overflow: hidden;
