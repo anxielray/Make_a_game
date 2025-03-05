@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Developer's Log: Brick Breaker Game Development
 
 ## Responsibilities
@@ -34,3 +35,56 @@ This section details my obligations and the implementations for the Brick Breake
 
   - [ ] Host the game on a web server.
   - [ ] Gather user feedback for future improvements.
+=======
+# TODO: To be Implemented in the Game
+
+## General
+
+- [ ] paddles
+- [ ] ball
+- [ ] levels-
+
+  - [ ] difficulty(speed ,number of balls,types/no. of bricks,)
+- [ ] scores
+- [ ] lives
+- [ ] display
+- [ ] bricks
+- [ ] timer
+
+## Brainstorming
+
+- [ ] -yes and
+- [ ] -giving ideas
+- [ ] **Display**
+
+  **Ray**...
+
+- [ ] black background
+- [ ] red ball
+- [ ] cool and dull(i.e navy-blue)
+- [ ] Grey paddle
+
+  **Cliff**...
+
+- [ ] white ball
+- [ ] -white border ,black background-color
+- [ ] black middle background
+- [ ] blue side background
+- [ ] interchanges between levels,green brick(has health upgrade)
+
+## Tasks
+
+====>{ ***Cliff***
+
+- [ ] start menu
+- [ ] countDown
+- [ ] score board
+
+=====>{ ***Ray***
+
+- [ ] game over/pause menu(score, restart, duration, resume)
+- [ ] lives on bricks(increment.decrement)
+- [ ] timer implementation
+
+- [ ] bricks falling() --to be in the difficulty level
+>>>>>>> 3ca0b87 ([Documentation]: Add the documentation for the)
