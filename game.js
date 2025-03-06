@@ -98,7 +98,7 @@ function update() {
     // Wall collisions
     if (ballX <= 0 || ballX >= 590) ballDX *= -1;
     if (ballY <= 0) ballDY *= -1;
-
+    
     // Paddle collision
     if (ballY >= 380 && ballX >= paddleX && ballX <= paddleX + 100) {
       // Force the ball to always go upward after paddle hit
