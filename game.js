@@ -5,8 +5,8 @@ const pauseMenu = document.querySelector(".pause-menu");
 const scoreDisplay = document.getElementById("score");
 const livesDisplay = document.getElementById("lives");
 
-let ballX = 50,
-  ballY = 50,
+let ballX = 450,
+  ballY = 450,
   ballDX = 1.5,
   ballDY = 1.5;
 let paddleX = 250;
@@ -19,21 +19,28 @@ let spaceEnabled = true;
 
 // === function create bricks for the game ===
 function createBricks() {
-  const rows = 5;
-  // === get the width size of the game container to use as the column size for responsiveness
-  const game_width = document.getElementById("game-container");
-  // const computed_style = getComputedStyle(game_width);
-  // const col = computed_style.width;
-  const colWidth = col.offsetWidth / 10;
-  // const colWidth = col / 10;
+  const rows = 7;
+  const col = 16;
   for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < colWidth; j++) {
-
+    for (let j = 0; j < col; j++) {
       const brick = document.createElement("div");
-      brick.classList.add("brick");
-      brick.style.left = `${j * 55 + 10}px`;
+      
+      if (i != 0){
+        
+        brick.classList.add("brick");
+        if (j === 0) {
+          brick.style.left = `${j * 55 + 50}px`;
+        }else if (j === col-1){
+          
+          brick.style.left = `${j * 55 - 40}px`;
+        }else {
+          brick.style.left = `${j * 55 + 10}px`;
+        }
+      }
+
       brick.style.top = `${i * 25 + 10}px`;
       gameContainer.appendChild(brick);
+      gameContainer.style.alignItems = "center";
     }
   }
 }
@@ -47,7 +54,8 @@ document.addEventListener("keydown", (e) => {
   } else if (e.key === "ArrowRight" && paddleX < 500) {
     paddleX += 40;
   } else if (e.code === "Space") {
-    if (ballStuckToPaddle && gameState === "playing") {
+    if (ballStuckToPaddle) {
+      // ==== start the game ===
       ballStuckToPaddle = false;
       ballDY = -3;
       ballDX = Math.random() * 2 - 1;
@@ -98,7 +106,7 @@ function update() {
     // Wall collisions
     if (ballX <= 0 || ballX >= 590) ballDX *= -1;
     if (ballY <= 0) ballDY *= -1;
-    
+
     // Paddle collision
     if (ballY >= 380 && ballX >= paddleX && ballX <= paddleX + 100) {
       // Force the ball to always go upward after paddle hit
