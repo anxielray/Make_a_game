@@ -1,9 +1,10 @@
-const game_container = document.getElementById("game-container");
-const paddle = document.querySelector(".paddle");
 const ball = document.querySelector(".ball");
-const pause_menu = document.querySelector(".pause-menu");
+const paddle = document.querySelector(".paddle");
 const score_display = document.getElementById("score");
 const lives_display = document.getElementById("lives");
+const pause_menu = document.querySelector(".pause-menu");
+const ctn_btn = document.getElementById("continue_button");
+const game_container = document.getElementById("game-container");
 
 // ==== game initial status ===
 let paddle_x = game_container.clientWidth / 2 - paddle.clientWidth / 2;
@@ -70,7 +71,7 @@ document.addEventListener("keydown", (e) => {
   } else if (e.code === "Space") {
     if (ball_stuck_to_paddle && game_state === "playing") {
       ball_stuck_to_paddle = false;
-      ballDY = -2;
+      ballDY = -3;
       ballDX = Math.random() * 2 - 1;
       space_enabled = false;
     } else if (game_state === "playing") {
@@ -127,7 +128,7 @@ function update() {
     // == ball and Wall collisions ===
     if (
       ball_x <= 0 ||
-      ball_x >= game_container.clientWidth + gameContainer.clientLeft
+      ball_x >= game_container.clientWidth + game_container.clientLeft
     )
       ballDX *= -1;
     if (ball_y <= 0) ballDY *= -1;
@@ -146,6 +147,7 @@ function update() {
       lives--;
       if (lives === 0) {
         game_over();
+        return;
       } else {
         reset_ball();
         update_lives(3 - lives);
@@ -181,10 +183,11 @@ function update_lives(lost_lives) {
   if (lost_lives === 0) {
     return;
   } else if (lost_lives === 3) {
-    game_over();
+    game_over(); 
+    return;
   }
   for (let i = 0; i < lost_lives; i++) {
-    hearts[i].classList.remove("lost");
+    hearts[i].classList.add("lost");
   }
 }
 
@@ -228,14 +231,8 @@ function updateScore() {
 // === function to show the game over menu ===
 function game_over() {
   game_state = "over";
-  // const menuText = document.querySelector(".pause-menu");
-  // const pause_menu = document.querySelector(".pause-menu");
-  menuText.textContent = `Game Over!\nFinal Score: ${score}`;
   pause_menu.classList.add("visible");
-  menuText.classList.add("show");
-  setTimeout(() => {
-    restartButton.classList.add("show");
-  }, 100);
+  ctn_btn.classList.remove("show");
 }
 
 // === function to start the game ===
@@ -262,6 +259,3 @@ document.addEventListener("DOMContentLoaded", () => {
   update_lives(0);
   requestAnimationFrame(update);
 });
-
-// ===== script from master branch ====
-const gameContainer = document.getElementById("game-container");
