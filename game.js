@@ -240,4 +240,28 @@ function animate() {
   }
 }
 
-startGame();
+
+// === startmenu===
+document.addEventListener("DOMContentLoaded",()=>{
+  const startMenu = document.getElementById("start-menu");
+  const newGameButton = document.getElementById("new-game-button");
+  const scoreContainer = document.getElementById("score-container");
+  const instructionsContainer = document.querySelector(".instructions");
+
+
+  
+  
+  
+  newGameButton.addEventListener("click",()=>{
+    startMenu.classList.add("hidden");
+    gameContainer.style.display=`block`
+    scoreContainer.style.display=`block`
+    instructionsContainer.style.display=`block`
+
+
+    startGame();
+
+  })
+  updateLives();
+  requestAnimationFrame(update)
+})
