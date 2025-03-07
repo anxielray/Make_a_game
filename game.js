@@ -250,12 +250,37 @@ function animate() {
   }
 }
 
+
+// === startmenu===
+document.addEventListener("DOMContentLoaded",()=>{
+  const startMenu = document.getElementById("start-menu");
+  const newGameButton = document.getElementById("new-game-button");
+  const scoreContainer = document.getElementById("score-container");
+  const instructionsContainer = document.querySelector(".instructions");
+
+
+  
+  
+  
+  newGameButton.addEventListener("click",()=>{
+    startMenu.classList.add("hidden");
+    gameContainer.style.display=`block`
+    scoreContainer.style.display=`block`
+    instructionsContainer.style.display=`block`
+
+
 document.addEventListener("DOMContentLoaded", () => {
   // === Create the bricks for the game ===
   create_bricks();
 
   // === start the game ===
-  start_game();
+      start_game();
   update_lives(0);
   requestAnimationFrame(update);
 });
+
+
+  })
+  update_lives();
+  requestAnimationFrame(update)
+})
