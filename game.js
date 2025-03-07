@@ -1,32 +1,44 @@
-const gameContainer = document.getElementById("game-container");
+// === get the game frame ===
+const game_container = document.getElementById("game-container");
+
+// === paddle ====
 const paddle = document.querySelector(".paddle");
+
+// === ball === 
 const ball = document.querySelector(".ball");
-const pauseMenu = document.querySelector(".pause-menu");
-const scoreDisplay = document.getElementById("score");
-const livesDisplay = document.getElementById("lives");
+
+// == pause menu ===
+const pause_menu = document.querySelector(".pause-menu");
+
+// == score display === 
+const score_display = document.getElementById("score");
+
+// === lives === 
+const lives_display = document.getElementById("lives");
 
 
-let paddleX = (gameContainer.clientWidth / 2) - (paddle.clientWidth/2);
+// ==== game initial status ===
+let paddleX = (game_container.clientWidth / 2) - (paddle.clientWidth/2);
 let ballX = (paddleX/2) - (ball.clientWidth/2),
   ballY = 450,
   ballDX = 1.5,
   ballDY = 1.5;
-let isPaused = false;
+let not_paused = false;// meaning the game is paused
 let score = 0;
 let lives = 3;
-let gameState = "ready";
-let ballStuckToPaddle = true;
-let spaceEnabled = true;
+let game_state = "ready";
+let ball_stuck_to_paddle = true;
+let space_enabled = true;
 
 // === function create bricks for the game ===
 function createBricks() {
-  const rows = 7;
-  const col = 15;
+  const rows = 6;
+  const col = 13;
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < col; j++) {
       const brick = document.createElement("div");
       
-      if (i != 0){
+      if (i > 0){
         
         brick.classList.add("brick");
         if (j === 0) {
@@ -35,15 +47,15 @@ function createBricks() {
           
           brick.style.left = `${j * 60 - 40}px`;
         }else {
-          brick.style.left = `${j * 60 + 8}px`;
+          brick.style.left = `${j * 70 - 16}px`;
         }
         brick.style.top = `${i * 45 + 10}px`;
       }
 
-      // brick.style.border = "1px solid white";
+      brick.style.border = "1px s olid white";
       // brick.style.padding = "1px";
-      gameContainer.appendChild(brick);
-      gameContainer.style.alignItems = "center";
+      game_container.appendChild(brick);
+      game_container.style.alignItems = "center";
     }
   }
 }
@@ -57,52 +69,49 @@ document.addEventListener("keydown", (e) => {
   } else if (e.key === "ArrowRight" && paddleX < 500) {
     paddleX += 40;
   } else if (e.code === "Space") {
-    if (ballStuckToPaddle) {
+    if (ball_stuck_to_paddle) {
       // ==== start the game ===
-      ballStuckToPaddle = false;
+      ball_stuck_to_paddle = false;
       ballDY = -3;
       ballDX = Math.random() * 2 - 1;
-      spaceEnabled = false;
+      space_enabled = false;
       document.querySelector(".pause-menu").classList.remove("visible");
-    } else if (gameState === "playing") {
-      gameState = "paused";
+    } else if (game_state === "playing") {
+      game_state = "paused";
       showPauseMenu();
-    } else if (gameState === "paused") {
+    } else if (game_state === "paused") {
       hidePauseMenu();
     }
   }
-  if (e.code === "Escape" && !ballStuckToPaddle) {
+  if (e.code === "Escape" && !ball_stuck_to_paddle) {
     showPauseMenu();
   }
   paddle.style.left = `${paddleX}px`;
 });
 
 function togglePause() {
-  isPaused = !isPaused;
-
-  //   pauseMenu.classList.toggle("hidden", !isPaused);
-  pauseMenu.style.display = "block";
-  //   if (!isPaused) requestAnimationFrame(update);
+  not_paused = !not_paused;
+  
+  //   pauseMenu.classList.toggle("hidden", !not_paused);
+  pause_menu.style.display = "block";
+  //   if (!not_paused) requestAnimationFrame(update);
 }
 
 function resumeGame() {
   togglePause();
 }
 
-function restartGame() {
-  location.reload();
-}
 
 function update() {
-  if (gameState === "paused") {
+  if (game_state === "paused") {
     requestAnimationFrame(update);
     return;
   }
-
-  if (ballStuckToPaddle) {
   
+  if (ball_stuck_to_paddle) {
+    
     // ===== this will be the original x-coordinate of the ball ====
-    ballX = (gameContainer.clientWidth / 2) - (ball.clientWidth/2);
+    ballX = (game_container.clientWidth / 2) - (ball.clientWidth/2);
 
     // ===== this will be the original y-coordinate of the ball ====
     ballY = 650;
@@ -127,7 +136,7 @@ function update() {
     // Bottom collision (lose a life)
     if (ballY > 400) {
       lives--;
-      livesDisplay.textContent = lives;
+      lives_display.textContent = lives;
       if (lives === 0) {
         showGameOver();
       } else {
@@ -150,13 +159,13 @@ function update() {
       brick.remove();
       ballDY *= -1;
       score += 10;
-      scoreDisplay.textContent = score;
+      score_display.textContent = score;
     }
   });
 
   ball.style.left = `${ballX}px`;
   ball.style.top = `${ballY}px`;
-
+  
   requestAnimationFrame(update);
 }
 
@@ -176,24 +185,27 @@ function resetBall() {
   ballY = 450;
   ballDX = 0;
   ballDY = 0;
-  ballStuckToPaddle = true;
-  spaceEnabled = true;
+  ball_stuck_to_paddle = true;
+  space_enabled = true;
 }
 
 function resetGame() {
   lives = 3;
   score = 0;
-  spaceEnabled = true;
+  space_enabled = true;
   updateLives();
   updateScore();
   resetBall();
-  paddleX = (gameContainer.clientWidth / 2) - (paddle.clientWidth/2);
+  paddleX = (game_container.clientWidth / 2) - (paddle.clientWidth/2);
   paddle.style.left = `${paddleX}px`;
-  gameState = "playing";
-  const controlButtons = document.querySelector(".pause-menu");
+  game_state = "playing";
+  // const controlButtons = document.querySelector(".pause-menu");
   controlButtons.classList.remove("visible");
   requestAnimationFrame(update);
 }
+  function restartGame() { // == Reload the page to restart the game ===
+    location.reload();
+  }
 
 function updateScore() {
   document.getElementById("score").textContent = `Score: ${score}`;
@@ -205,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function showPauseMenu() {
-  gameState = "paused";
+  game_state = "paused";
   //   const continueButton = document.querySelector(".continueButton");
   //   const restartButton = document.querySelector(".restartButton");
   const menuText = document.querySelector(".pause-menu");
@@ -226,13 +238,13 @@ function hidePauseMenu() {
 
   // === set the game state to playing after the pause menu is hidden ===
   setTimeout(() => {
-    gameState = "playing";
+    game_state = "playing";
   }, 90);
 }
 
 // === function to show the game over menu ===
 function showGameOver() {
-  gameState = "over";
+  game_state = "over";
   const menuText = document.querySelector(".pause-menu");
   const controlButtons = document.querySelector(".pause-menu");
   menuText.textContent = `Game Over!\nFinal Score: ${score}`;
@@ -246,14 +258,14 @@ function showGameOver() {
 // === function to start the game ===
 function startGame() {
   resetGame();
-  gameState = "playing";
-  ballStuckToPaddle = true;
+  game_state = "playing";
+  ball_stuck_to_paddle = true;
   animate();
 }
 
 // === function to animate the game ===
 function animate() {
-  if (gameState === "playing") {
+  if (game_state === "playing") {
     update();
   }
 }
