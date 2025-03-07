@@ -2,8 +2,6 @@
 
 ## Responsibilities
 
-[ ] 
-
 - **Game Design**: Conceptualize the game's mechanics, rules, and user experience.
 - **Development**: Implement the game using HTML for structure, CSS for styling, and JavaScript for functionality.
 - **Testing**: Conduct thorough testing to ensure the game operates smoothly across different browsers and devices.
@@ -34,3 +32,4 @@
 
   - [X] Host the game on a web server.
   - [ ] Gather user feedback for future improvements.
+
