@@ -63,9 +63,9 @@ document.addEventListener("keydown", (e) => {
 function togglePause() {
   isPaused = !isPaused;
 
-//   pauseMenu.classList.toggle("hidden", !isPaused);
-pauseMenu.style.display = "block";
-//   if (!isPaused) requestAnimationFrame(update);
+  //   pauseMenu.classList.toggle("hidden", !isPaused);
+  pauseMenu.style.display = "block";
+  //   if (!isPaused) requestAnimationFrame(update);
 }
 
 function resumeGame() {
@@ -95,7 +95,6 @@ function update() {
 
     // Paddle collision
     if (ballY >= 380 && ballX >= paddleX && ballX <= paddleX + 100) {
-
       // Force the ball to always go upward after paddle hit
       ballDY = -Math.abs(ballDY);
 
@@ -179,29 +178,27 @@ function updateScore() {
   document.getElementById("score").textContent = `Score: ${score}`;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  updateLives();
-  requestAnimationFrame(update);
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//   updateLives();
+//   requestAnimationFrame(update);
+// });
 
 function showPauseMenu() {
   gameState = "paused";
-//   const continueButton = document.querySelector(".continueButton");
-//   const restartButton = document.querySelector(".restartButton");
+  //   const continueButton = document.querySelector(".continueButton");
+  //   const restartButton = document.querySelector(".restartButton");
   const menuText = document.querySelector(".pause-menu");
   const controlButtons = document.querySelector(".pause-menu");
   controlButtons.classList.add("visible");
   menuText.classList.add("show");
-//   setTimeout(() => {
-//     continueButton.classList.add("show");
-//     restartButton.classList.add("show");
-//   }, 100);
+  //   setTimeout(() => {
+  //     continueButton.classList.add("show");
+  //     restartButton.classList.add("show");
+  //   }, 100);
 }
 
 // === function to hide the pause menu ===
 function hidePauseMenu() {
-
-
   const menuText = document.querySelector(".pause-menu");
   menuText.classList.remove("show");
   controlButtons.classList.remove("visible");
@@ -240,28 +237,54 @@ function animate() {
   }
 }
 
-
 // === startmenu===
-document.addEventListener("DOMContentLoaded",()=>{
-  const startMenu = document.getElementById("start-menu");
-  const newGameButton = document.getElementById("new-game-button");
-  const scoreContainer = document.getElementById("score-container");
-  const instructionsContainer = document.querySelector(".instructions");
+// document.addEventListener("DOMContentLoaded", () => {
+//   const startMenu = document.getElementById("start-menu");
+//   const newGameButton = document.getElementById("new-game-button");
+//   const scoreContainer = document.getElementById("score-container");
+//   const instructionsContainer = document.querySelector(".instructions");
 
+//   newGameButton.addEventListener("click", () => {
+//     startMenu.classList.add("hidden");
+//     gameContainer.style.display = `block`;
+//     scoreContainer.style.display = `block`;
+//     instructionsContainer.style.display = `block`;
 
-  
-  
-  
-  newGameButton.addEventListener("click",()=>{
-    startMenu.classList.add("hidden");
-    gameContainer.style.display=`block`
-    scoreContainer.style.display=`block`
-    instructionsContainer.style.display=`block`
+//     startGame();
+//   });
+//   updateLives();
+//   requestAnimationFrame(update);
+// });
 
+document.addEventListener("DOMContentLoaded",showGameOver)
+// === function to show the game over menu ===
+function showGameOver() {
+  score=0
+  gameState = "over";
 
-    startGame();
+  let scores = JSON.parse(localStorage.getItem("scores")) || [];
+  scores.push(score);
+  localStorage.setItem("scores", JSON.stringify(scores));
 
-  })
-  updateLives();
-  requestAnimationFrame(update)
-})
+  const scorelist=document.getElementById("score-list");
+  scorelist.innerHTML=``;
+  // score=0;
+  console.log(scores.length)
+  if (scores.length===0|| scores.length===1&&scores[0]==0){
+    scorelist.innerHTML=`<p>No scores yet</p><button id="restart-button">Restart</button><a class="back-button">Back to Main menu</a>`
+  }else{
+    scores.sort((a,b)=>b -a);
+    scores.forEach(
+      function(score){
+        const li=document.createElement("li");
+        li.textContent=score;
+        scorelist.appendChild(li)
+      }
+    )
+    scorelist.innerHTML=`<button id="restart-button">Restart</button><a class="back-button">Back to Main menu</a>`;
+  }
+
+  document.getElementById("restart-button").addEventListener("click", () => {
+    restartGame();
+  });
+}
