@@ -4,6 +4,10 @@ const ball = document.querySelector(".ball");
 const pauseMenu = document.querySelector(".pause-menu");
 const scoreDisplay = document.getElementById("score");
 const livesDisplay = document.getElementById("lives");
+const startMenuButton = document.getElementById("start-menu");
+const newGameButton = document.getElementById("new-game-button");
+const scoreContainer = document.getElementById("score-list");
+const instructionsContainer = document.querySelector(".instructions");
 
 let ballX = 50,
   ballY = 50,
@@ -209,19 +213,6 @@ function hidePauseMenu() {
   }, 90);
 }
 
-// === function to show the game over menu ===
-function showGameOver() {
-  gameState = "over";
-  const menuText = document.querySelector(".pause-menu");
-  const controlButtons = document.querySelector(".pause-menu");
-  menuText.textContent = `Game Over!\nFinal Score: ${score}`;
-  controlButtons.classList.add("visible");
-  menuText.classList.add("show");
-  setTimeout(() => {
-    restartButton.classList.add("show");
-  }, 100);
-}
-
 // === function to start the game ===
 function startGame() {
   resetGame();
@@ -238,53 +229,86 @@ function animate() {
 }
 
 // === startmenu===
-// document.addEventListener("DOMContentLoaded", () => {
-//   const startMenu = document.getElementById("start-menu");
-//   const newGameButton = document.getElementById("new-game-button");
-//   const scoreContainer = document.getElementById("score-container");
-//   const instructionsContainer = document.querySelector(".instructions");
+newGameButton.addEventListener("click", () => {
+  startMenuButton.classList.add("hidden");
+  gameContainer.style.display = `block`;
+  scoreContainer.style.display = `block`;
+  instructionsContainer.style.display = `block`;
+  updateLives();
+  requestAnimationFrame(update);
+  startCountdown();
+});
 
-//   newGameButton.addEventListener("click", () => {
-//     startMenu.classList.add("hidden");
-//     gameContainer.style.display = `block`;
-//     scoreContainer.style.display = `block`;
-//     instructionsContainer.style.display = `block`;
+// Function to handle the countdown
+function startCountdown() {
+  let countdown = 3;
+  const countdownOverlay = document.createElement('div');
+  countdownOverlay.style.position = 'absolute';
+  countdownOverlay.style.top = '0';
+  countdownOverlay.style.left = '0';
+  countdownOverlay.style.width = '100%';
+  countdownOverlay.style.height = '100%';
+  countdownOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+  countdownOverlay.style.color = 'white';
+  countdownOverlay.style.fontSize = '48px';
+  countdownOverlay.style.display = 'flex';
+  countdownOverlay.style.justifyContent = 'center';
+  countdownOverlay.style.alignItems = 'center';
+  countdownOverlay.style.zIndex = '1000';
+  document.body.appendChild(countdownOverlay);
 
-//     startGame();
-//   });
-//   updateLives();
-//   requestAnimationFrame(update);
-// });
+  const countdownInterval = setInterval(() => {
+    countdownOverlay.textContent = countdown;
+    countdown--;
 
-document.addEventListener("DOMContentLoaded",showGameOver)
+    if (countdown < 0) {
+      clearInterval(countdownInterval);
+      document.body.removeChild(countdownOverlay);
+      startGame(); // Start the game after the countdown
+    }
+  }, 900);
+}
+
+function startMenu() {
+  startMenuButton.classList.remove("hidden");
+  gameContainer.style.display = `none`;
+  scoreContainer.style.display = `none`;
+  instructionsContainer.style.display = `none`;
+}
+
+// document.addEventListener("DOMContentLoaded",showGameOver)
 // === function to show the game over menu ===
 function showGameOver() {
-  score=0
+  startMenuButton.classList.add("hidden");
+  gameContainer.style.display = `none`;
+  scoreContainer.style.display = `block`;
+  instructionsContainer.style.display = `none`;
+  score = 0;
   gameState = "over";
 
   let scores = JSON.parse(localStorage.getItem("scores")) || [];
   scores.push(score);
   localStorage.setItem("scores", JSON.stringify(scores));
 
-  const scorelist=document.getElementById("score-list");
-  scorelist.innerHTML=``;
+  const scorelist = document.getElementById("score-list");
+  scorelist.innerHTML = ``;
   // score=0;
-  console.log(scores.length)
-  if (scores.length===0|| scores.length===1&&scores[0]==0){
-    scorelist.innerHTML=`<p>No scores yet</p><button id="restart-button">Restart</button><a class="back-button">Back to Main menu</a>`
-  }else{
-    scores.sort((a,b)=>b -a);
-    scores.forEach(
-      function(score){
-        const li=document.createElement("li");
-        li.textContent=score;
-        scorelist.appendChild(li)
-      }
-    )
-    scorelist.innerHTML=`<button id="restart-button">Restart</button><a class="back-button">Back to Main menu</a>`;
+  console.log(scores.length);
+  if (scores.length === 0 || (scores.length === 1 && scores[0] == 0)) {
+    scorelist.innerHTML = `<p>No scores yet</p>`;
+  } else {
+    scores.sort((a, b) => b - a);
+    scores.forEach(function (score) {
+      const li = document.createElement("li");
+      li.textContent = score;
+      scorelist.appendChild(li);
+    });
   }
+  scorelist.innerHTML += `<button id="restart-button">Restart</button><a class="back-button" onclick="startMenu()">Back to Main menu</a>`;
 
   document.getElementById("restart-button").addEventListener("click", () => {
     restartGame();
   });
 }
+
+document.addEventListener("DOMContentLoaded", startMenu)

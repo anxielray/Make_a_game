@@ -235,3 +235,7 @@ h1 {
   cursor: pointer;
 }
 
+.start-menu .hidden{
+  display: none;
+}
+
