@@ -51,6 +51,7 @@ body {
     background-color: black;
     margin: auto;
     overflow: hidden;
+    display: none;
   }
   .paddle {
     position: absolute;
@@ -95,6 +96,7 @@ body {
     flex-direction: column;
   }
   .instructions {
+    display: none;
     animation: bounce 1s infinite;
     color: white;
     text-align: center;
@@ -184,3 +186,21 @@ body {
     display: block;
   }
   
+  .menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    display: block; /* Initially hidden */
+  }
+  .menu.hidden {
+    display: none;
+  }
+  #score-container{
+    display: none;
+  }
