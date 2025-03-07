@@ -18,20 +18,18 @@
       <p>Score: <span id="score">0</span></p>
     </div>
     <div id="game-container">
-      <div class="ball-and-paddle">
+      <!-- <div class="ball-and-paddle"> -->
 
         <div class="paddle"></div>
         <div class="ball"></div>
-      </div>
-      <div id="pause-menu" class="hidden">
-        <div class="pause-menu">
+      <!-- </div> -->
+        <div class="pause-menu hidden visible">
           <h2>Paused</h2>
           <div class="pause-menu header"></div>
           <button id="continueButton" onclick="resumeGame()">Continue</button>
           <button id="restartButton" onclick="restartGame()">Restart</button>
         </div>
       </div>
-    </div>
     <script src="game.js"></script>
   </body>
 </html>

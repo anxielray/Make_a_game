@@ -2,7 +2,7 @@
 
 ## Responsibilities
 
-This section details my obligations and the implementations for the Brick Breaker game project, both completed and pending.
+[ ] 
 
 - **Game Design**: Conceptualize the game's mechanics, rules, and user experience.
 - **Development**: Implement the game using HTML for structure, CSS for styling, and JavaScript for functionality.
@@ -12,10 +12,10 @@ This section details my obligations and the implementations for the Brick Breake
 ## Development Roadmap
 
 - [ ] **Research and Planning**: Study existing Brick Breaker games to understand core mechanics and design principles.
-- [ ] **Initial Setup**:
+- [X] **Initial Setup**:
 
-  - [ ] Create the project repository and set up the development environment.
-  - [ ] Design the game layout using HTML and CSS.
+  - [X] Create the project repository and set up the development environment.
+  - [X] Design the game layout using HTML and CSS.
 - [ ] **Game Mechanics Implementation**:
 
   - [X] Develop the paddle and ball dynamics using JavaScript.
@@ -32,5 +32,5 @@ This section details my obligations and the implementations for the Brick Breake
   - [ ] Fix identified bugs and optimize performance.
 - [ ] **Deployment**:
 
-  - [ ] Host the game on a web server.
+  - [X] Host the game on a web server.
   - [ ] Gather user feedback for future improvements.

@@ -5,11 +5,12 @@ const pauseMenu = document.querySelector(".pause-menu");
 const scoreDisplay = document.getElementById("score");
 const livesDisplay = document.getElementById("lives");
 
-let ballX = 450,
+
+let paddleX = (gameContainer.clientWidth / 2) - (paddle.clientWidth/2);
+let ballX = (paddleX/2) - (ball.clientWidth/2),
   ballY = 450,
   ballDX = 1.5,
   ballDY = 1.5;
-let paddleX = 250;
 let isPaused = false;
 let score = 0;
 let lives = 3;
@@ -20,7 +21,7 @@ let spaceEnabled = true;
 // === function create bricks for the game ===
 function createBricks() {
   const rows = 7;
-  const col = 16;
+  const col = 15;
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < col; j++) {
       const brick = document.createElement("div");
@@ -29,16 +30,18 @@ function createBricks() {
         
         brick.classList.add("brick");
         if (j === 0) {
-          brick.style.left = `${j * 55 + 50}px`;
+          brick.style.left = `${j * 60 + 50}px`;
         }else if (j === col-1){
           
-          brick.style.left = `${j * 55 - 40}px`;
+          brick.style.left = `${j * 60 - 40}px`;
         }else {
-          brick.style.left = `${j * 55 + 10}px`;
+          brick.style.left = `${j * 60 + 8}px`;
         }
+        brick.style.top = `${i * 45 + 10}px`;
       }
 
-      brick.style.top = `${i * 25 + 10}px`;
+      // brick.style.border = "1px solid white";
+      // brick.style.padding = "1px";
       gameContainer.appendChild(brick);
       gameContainer.style.alignItems = "center";
     }
@@ -97,8 +100,12 @@ function update() {
   }
 
   if (ballStuckToPaddle) {
-    ballX = paddleX + 100 / 2 - 10 / 2;
-    ballY = 380;
+  
+    // ===== this will be the original x-coordinate of the ball ====
+    ballX = (gameContainer.clientWidth / 2) - (ball.clientWidth/2);
+
+    // ===== this will be the original y-coordinate of the ball ====
+    ballY = 650;
   } else {
     ballX += ballDX;
     ballY += ballDY;
@@ -165,8 +172,8 @@ function updateLives() {
 }
 
 function resetBall() {
-  ballX = paddleX + 100 / 2 - 10 / 2;
-  ballY = 380;
+  ballX = (paddleX/2)- (ball.clientWidth/2);
+  ballY = 450;
   ballDX = 0;
   ballDY = 0;
   ballStuckToPaddle = true;
@@ -180,7 +187,7 @@ function resetGame() {
   updateLives();
   updateScore();
   resetBall();
-  paddleX = 250;
+  paddleX = (gameContainer.clientWidth / 2) - (paddle.clientWidth/2);
   paddle.style.left = `${paddleX}px`;
   gameState = "playing";
   const controlButtons = document.querySelector(".pause-menu");
