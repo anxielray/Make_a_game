@@ -16,3 +16,5 @@ This document will contain the feedback from different users that test the progr
 
 - [ ] Make the game components be dynamic
 - [ ] The ball can hit more than one brick at a single bounce unrealistically, the Math is off.
+- [ ] Total lives lost should take the player to the scoreboard.
+- [ ] Winning a game should show the cheers emoji on a timeout.
