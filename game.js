@@ -9,17 +9,19 @@ const newGameButton = document.getElementById("new-game-button");
 const scoreContainer = document.getElementById("score-list");
 const instructionsContainer = document.querySelector(".instructions");
 
+
 let ballX = 50,
   ballY = 50,
   ballDX = 1.5,
   ballDY = 1.5;
-let paddleX = 250;
+  let paddleX = 250;
 let isPaused = false;
 let score = 0;
 let lives = 3;
 let gameState = "ready";
 let ballStuckToPaddle = true;
 let spaceEnabled = true;
+let playerName=""
 
 // === function create bricks for the game ===
 function createBricks() {
@@ -53,6 +55,11 @@ document.addEventListener("keydown", (e) => {
       document.querySelector(".pause-menu").classList.remove("visible");
     } else if (gameState === "playing") {
       gameState = "paused";
+      const menuText = document.querySelector(".pause-menu");
+      const controlButtons = document.querySelector(".pause-menu");
+      menuText.textContent = `Game Over!\nFinal Score: ${score}`;
+      controlButtons.classList.add("visible");
+      menuText.classList.add("show");
       showPauseMenu();
     } else if (gameState === "paused") {
       hidePauseMenu();
@@ -230,6 +237,11 @@ function animate() {
 
 // === startmenu===
 newGameButton.addEventListener("click", () => {
+  playerName = prompt("Enter your name:");
+  if (!playerName) {
+    alert("Name is required to start the game.");
+    return;
+  }
   startMenuButton.classList.add("hidden");
   gameContainer.style.display = `block`;
   scoreContainer.style.display = `block`;
@@ -239,7 +251,7 @@ newGameButton.addEventListener("click", () => {
   startCountdown();
 });
 
-// Function to handle the countdown
+// === CountDown ===
 function startCountdown() {
   let countdown = 3;
   const countdownOverlay = document.createElement('div');
@@ -283,11 +295,10 @@ function showGameOver() {
   gameContainer.style.display = `none`;
   scoreContainer.style.display = `block`;
   instructionsContainer.style.display = `none`;
-  score = 0;
   gameState = "over";
 
   let scores = JSON.parse(localStorage.getItem("scores")) || [];
-  scores.push(score);
+  scores.push({name:playerName,score:score});
   localStorage.setItem("scores", JSON.stringify(scores));
 
   const scorelist = document.getElementById("score-list");
@@ -298,9 +309,9 @@ function showGameOver() {
     scorelist.innerHTML = `<p>No scores yet</p>`;
   } else {
     scores.sort((a, b) => b - a);
-    scores.forEach(function (score) {
+    scores.forEach(function (entry) {
       const li = document.createElement("li");
-      li.textContent = score;
+      li.textContent = `${entry.name}:${entry.score}`;
       scorelist.appendChild(li);
     });
   }
