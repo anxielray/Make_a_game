@@ -18,9 +18,9 @@ const score_display = document.getElementById("score");
 const lives_display = document.getElementById("lives");
 
 // ==== game initial status ===
-let paddle_x = (game_container.clientWidth / 2) - (paddle.clientWidth / 2);
-let ball_x = (paddle_x / 2) - (ball.clientWidth / 2),
-  ballY = 650,
+let paddle_x = game_container.clientWidth / 2 - paddle.clientWidth / 2;
+let ball_x = paddle_x / 2 - ball.clientWidth / 2,
+  ball_y = 650,
   ballDX = 1.5,
   ballDY = 1.5;
 let not_paused = false; // meaning the game is paused
@@ -31,7 +31,7 @@ let ball_stuck_to_paddle = true;
 let space_enabled = true;
 
 // === function create bricks for the game ===
-function createBricks() {
+function create_bricks() {
   const rows = 6;
   const col = 13;
   for (let i = 1; i < rows; i++) {
@@ -57,18 +57,31 @@ function createBricks() {
     }
   }
 }
-// === create bricks for the game ===
-createBricks();
 
 // // === event listener to control the paddle movements ===
 document.addEventListener("keydown", (e) => {
   // === enable movement keys only when the game is on ===
   // === event for any key down ====
   // === event for direction keys ==
-  if (e.key === "ArrowLeft" && game_state === "playing") {
-    paddle_x -= 40;
-  } else if (e.key === "ArrowRight" && game_state === "playing") {
-    paddle_x += 40;
+  const furthest_x_paddle = paddle_x + 200;
+  if (e.key === "ArrowLeft") {
+    //&& game_state === "playing") {
+    if (paddle_x-40 <= game_container.clientLeft) {
+        paddle.style.left = `${game_container.clientLeft}px`;
+    } else {
+      paddle_x -= 40;
+    }
+  } else if (e.key === "ArrowRight") {
+    //&& game_state === "playing") {
+    if (
+      furthest_x_paddle+40 >=
+      game_container.clientLeft + game_container.clientWidth
+    ) {
+      paddle.style.left =
+        game_container.clientLeft + game_container.clientWidth;
+    } else {
+      paddle_x += 40;
+    }
     // === event for space key ===
     // === event for pausing and resuming game ====
   } else if (e.key === "Space" && game_state === "playing") {
@@ -77,44 +90,20 @@ document.addEventListener("keydown", (e) => {
     // === event for starting the game ===
   } else if ((e.key === "Space" || e.key === "p") && game_state === "paused") {
     resume_game();
-  } else if (e.key === "Space" && game_state === "ready") {
+  } else if (e.key === "Space") {
+    // && game_state === "ready") {
     // == call the function to start the game ====
-    start_game();
+    // start_game();
+    ballDY = -3;
+    ballDX = Math.random() * 2 - 1;
+    requestAnimationFrame(update);
+    // ball_x -= ballDX;
     // === event for the escape key ===
   } else if (e.key === "Escape" && game_state === "paused") {
     //call the function to hide the pause menu
   }
+  paddle.style.left = `${paddle_x}px`;
 });
-
-// document.addEventListener("keydown", (e) => {
-//  else if (e.code === "Space") {
-//     if (ball_stuck_to_paddle) {
-//       // ==== start the game ===
-//       ball_stuck_to_paddle = false; function to  start the game should do this not the event listener
-//       ballDY = -3;
-//       ballDX = Math.random() * 2 - 1;
-//       space_enabled = false;
-//       document.querySelector(".pause-menu").classList.remove("visible");
-//     } else if (game_state === "playing") {
-//       game_state = "paused";
-//       showPauseMenu();
-//     } else if (game_state === "paused") {
-//       hidePauseMenu();
-//     }
-//   }
-//   if (e.code === "Escape" && !ball_stuck_to_paddle) {
-//     showPauseMenu();
-//   }
-//   paddle.style.left = `${paddleX}px`;
-// });
-
-// function togglePause() {
-//   not_paused = !not_paused;
-
-//   pauseMenu.classList.toggle("hidden", !not_paused);
-// pause_menu.style.display = "block";
-//   if (!not_paused) requestAnimationFrame(update);
-// }
 
 // ==== This is a function to pause the game ====
 function pause_game() {
@@ -139,99 +128,106 @@ function hide_pause_menu() {
 }
 
 function update() {
-  if (game_state === "paused") {
-    requestAnimationFrame(update);
-    return;
-  }
+  if (game_state !== "over") {
+    if (game_state === "paused") {
+      requestAnimationFrame(update); // === request for the animation frames recursivelly, this causes a pause-like effect ===
+      return;
+    } else if (game_state === "ready") {
+      ball_x = game_container.clientWidth / 2 - ball.clientWidth / 2;
+      ball_y = 650;
+    } else {
+      ball_x += ballDX;
+      ball_y += ballDY;
 
-  if (ball_stuck_to_paddle) {
-    // ===== this will be the original x-coordinate of the ball ====
-    ball_x = (paddle_x.clientWidth / 2) - (ball.clientWidth / 2);
+      // == ball and Wall collisions ===
+      if (ball_x <= 0 || ball_x >= 590) ballDX *= -1;
+      if (ball_y <= 0) ballDY *= -1;
 
-    // ===== this will be the original y-coordinate of the ball ====
-    ballY = 650;
-  } else {
-    ball_x += ballDX;
-    ballY += ballDY;
+      // == paddle and Wall collisions ===
+      if (paddle_x <= game_container.clientLeft) {
+        paddle.style.left = `${game_container.clientLeft}px`;
+      }
 
-    // Wall collisions
-    if (ball_x <= 0 || ball_x >= 590) ballDX *= -1;
-    if (ballY <= 0) ballDY *= -1;
+      // === simulate vertical ball bouncing off the paddle on collision ===
+      if (ball_y >= 650 && ball_x >= paddle_x && ball_x <= paddle_x + 200) {
+        ballDY = -Math.abs(ballDY);
+        ball_y = `${ball_y + ballDY}px`;
 
-    // Paddle collision
-    if (ballY >= 380 && ball_x >= paddle_x && ball_x <= paddle_x + 100) {
-      // Force the ball to always go upward after paddle hit
-      ballDY = -Math.abs(ballDY);
+        // === simulate horizontal ball bouncing off the paddle on collision ===
+        let hitPoint = (ball_x - paddle_x) / 200;
+        ballDX = 3 * (hitPoint - 0.5); // This gives a spread between -1.5 to 1.5
+        ball_x = `${ball_x + ballDX}px`;
+      }
 
-      // Optionally adjust x direction based on where the ball hits the paddle
-      let hitPoint = (ball_x - paddle_x) / 100;
-      ballDX = 3 * (hitPoint - 0.5); // This gives a spread between -1.5 to 1.5
-    }
-
-    // Bottom collision (lose a life)
-    if (ballY > 400) {
-      lives--;
-      lives_display.textContent = lives;
-      if (lives === 0) {
-        showGameOver();
-      } else {
-        reset_ball();
+      // Bottom collision (lose a life)
+      if (ball_y > 650) {
+        lives--;
+        if (lives === 0) {
+          game_over();
+        } else {
+          reset_ball();
+          update_lives(3 - lives);
+        }
       }
     }
+
+    // Brick collision
+    document.querySelectorAll(".brick").forEach((brick) => {
+      const brickRect = brick.getBoundingClientRect();
+      const ballRect = ball.getBoundingClientRect();
+
+      if (
+        ballRect.left < brickRect.right &&
+        ballRect.right > brickRect.left &&
+        ballRect.top < brickRect.bottom &&
+        ballRect.bottom > brickRect.top
+      ) {
+        brick.remove();
+        ballDY *= -1;
+        score += 10;
+        score_display.textContent = score;
+      }
+    });
+
+    ball.style.left = `${ball_x}px`;
+    ball.style.top = `${ball_y}px`;
   }
-
-  // Brick collision
-  document.querySelectorAll(".brick").forEach((brick) => {
-    const brickRect = brick.getBoundingClientRect();
-    const ballRect = ball.getBoundingClientRect();
-
-    if (
-      ballRect.left < brickRect.right &&
-      ballRect.right > brickRect.left &&
-      ballRect.top < brickRect.bottom &&
-      ballRect.bottom > brickRect.top
-    ) {
-      brick.remove();
-      ballDY *= -1;
-      score += 10;
-      score_display.textContent = score;
-    }
-  });
-
-  ball.style.left = `${ball_x}px`;
-  ball.style.top = `${ballY}px`;
-
   requestAnimationFrame(update);
 }
 
-function updateLives(lost_lives) {
+function update_lives(lost_lives) {
   const hearts = document.querySelectorAll(".heart");
   if (lost_lives === 0) {
     return;
+  } else if (lost_lives === 3) {
+    game_over();
   }
   for (let i = 0; i < lost_lives; i++) {
-      hearts[i].classList.remove("lost");
+    hearts[i].classList.remove("lost");
   }
 }
 
 function reset_ball() {
-  ball.style.left = `${(game_container.clientWidth / 2) - (ball.clientWidth / 2)}px`;
-  ballY = 650;
+  ball.style.left = `${
+    game_container.clientWidth / 2 - ball.clientWidth / 2
+  }px`;
+  ball_y = 650;
   ballDX = 1.5;
   ballDY = 1.5;
   ball_stuck_to_paddle = true;
   space_enabled = true;
 }
 
+// === This function will reset the ball to the original position ===
 function reset_game() {
   lives = 3;
   const lost_lives = start_lives - lives;
   score = 0;
   space_enabled = true;
-  updateLives(lost_lives);
+  update_lives(lost_lives);
   updateScore();
   reset_ball();
-  paddle_x = (game_container.clientWidth / 2) - (paddle.clientWidth / 2);
+  paddle_x = game_container.clientWidth / 2 - paddle.clientWidth / 2;
   paddle.style.left = `${paddle_x}px`;
   pause_menu.classList.replace("visible", "hidden");
   requestAnimationFrame(update);
@@ -247,13 +243,8 @@ function updateScore() {
   document.getElementById("score").textContent = `Score: ${score}`;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  updateLives();
-  requestAnimationFrame(update);
-});
-
 // === function to show the game over menu ===
-function showGameOver() {
+function game_over() {
   game_state = "over";
   // const menuText = document.querySelector(".pause-menu");
   // const pause_menu = document.querySelector(".pause-menu");
@@ -269,15 +260,21 @@ function showGameOver() {
 function start_game() {
   reset_game();
   game_state = "ready";
-  ball_stuck_to_paddle = true;
-  animate();
+  requestAnimationFrame(update);
 }
 
-// === function to animate the game ===
+// === This is a function to animate the game ===
 function animate() {
   if (game_state === "playing") {
     update();
   }
 }
 
-start_game();
+document.addEventListener("DOMContentLoaded", () => {
+  // === Create the bricks for the game ===
+  create_bricks();
+
+  // === start the game ===
+  start_game();
+  requestAnimationFrame(update);
+});
