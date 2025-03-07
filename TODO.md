@@ -30,6 +30,6 @@
   - [ ] Fix identified bugs and optimize performance.
 - [ ] **Deployment**:
 
-  - [X] Host the game on a web server.
+  - [ ] Host the game on a web server.
   - [ ] Gather user feedback for future improvements.
 

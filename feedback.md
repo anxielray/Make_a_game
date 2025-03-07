@@ -16,5 +16,9 @@ This document will contain the feedback from different users that test the progr
 
 - [ ] Make the game components be dynamic
 - [ ] The ball can hit more than one brick at a single bounce unrealistically, the Math is off.
-- [ ] Total lives lost should take the player to the scoreboard.
+
+_Though I've only seen this problem persisting in one browser(mozilla firefox)_
+- [ ] On all lives lost, the player should be taken to the scoreboard.
 - [ ] Winning a game should show the cheers emoji on a timeout.
+- [ ] Stop the paddle from moving before the game starts
+- [ ] Make the live hearts fade when the user looses a life.
