@@ -27,12 +27,13 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-}
+} 
 
 .pause-menu.header {
   padding: 1%;
   margin: 10%;
 }
+
 
 #game-container {
   position: relative;
@@ -42,7 +43,9 @@ body {
   margin: auto;
   justify-content: center;
   overflow: hidden;
+  /* display: none; used when displaying the start menu*/
 }
+
 .paddle {
   position: absolute;
   z-index: 999;
@@ -61,15 +64,6 @@ body {
   background-color: red;
   border-radius: 50%;
 }
-
-/* .ball-and-paddle {
-    position: absolute;
-    align-items: center;
-    display: grid;
-    width: 250px;
-    bottom: 10px;
-    left: 250px;
-  } */
 
 .brick {
   position: absolute;
@@ -95,6 +89,7 @@ body {
 }
 
 .instructions {
+  /* display: none;  initilalily for the start of the game menu*/
   color: white;
   text-align: center;
   padding: 10px;
@@ -130,16 +125,19 @@ body {
   color: white;
   font-size: 24px;
 }
+
 .game-menu h2 {
   margin-bottom: 20px;
   opacity: 0;
   transform: translateY(-20px);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
+
 .game-menu h2.show {
   opacity: 1;
   transform: translateY(0);
 }
+
 .button-container {
   opacity: 0;
   transform: translateY(-20px);
@@ -151,16 +149,12 @@ body {
   transform: translateY(0);
 }
 
-.continue.show,
+#continue_button,
 #restart_button {
+  cursor: pointer;
   transform: translateY(-20px);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
-
-#continue_button {
-  display: none;
-}
-
 
 .control-buttons {
   display: none;
@@ -174,4 +168,59 @@ body {
 
 .control-buttons.visible {
   display: block;
+}
+
+.menu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  z-index: 9999;
+  border-radius: 10px;
+  text-align: center;
+  display: block;
+}
+
+.menu.hidden {
+  display: none;
+}
+
+#score-container {
+  display: none;
+}
+
+h1 {
+  text-align: center;
+}
+
+#score-list {
+  list-style: none;
+  padding: 0;
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+#score-list li {
+  background: #fff;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.back-button/* , #restart-button */ {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  width: fit-content;
+  cursor: pointer;
 }
