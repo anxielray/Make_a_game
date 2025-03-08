@@ -22,3 +22,5 @@ _Though I've only seen this problem persisting in one browser(mozilla firefox)_
 - [ ] Winning a game should show the cheers emoji on a timeout.
 - [ ] Stop the paddle from moving before the game starts
 - [ ] Make the live hearts fade when the user looses a life.
+- [ ] Stop the padle from moving when the game is paused.
+- [ ] Stop the continuation of the game when the game is over
