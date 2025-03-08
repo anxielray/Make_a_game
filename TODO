@@ -38,7 +38,8 @@ tasks
 * score board
 
 // =====Ray
-* game over/pause menu(score, restart, duration, resume)
+* game logic
+* pause menu(score, restart, duration, resume)
 * lives on bricks(increement.drecreement)
 * timer implementation
 
