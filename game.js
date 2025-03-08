@@ -1,10 +1,14 @@
 const ball = document.querySelector(".ball");
 const paddle = document.querySelector(".paddle");
-const score_display = document.getElementById("score");
 const lives_display = document.getElementById("lives");
+const score_display = document.getElementById("score");
 const pause_menu = document.querySelector(".pause-menu");
+const start_menu = document.getElementById("start-menu");
 const ctn_btn = document.getElementById("continue_button");
 const game_container = document.getElementById("game-container");
+const new_game_button = document.getElementById("new-game-button");
+const score_container = document.getElementById("score-container");
+const instructions_container = document.querySelector(".instructions");
 
 // ==== game initial status ===
 let paddle_x = game_container.clientWidth / 2 - paddle.clientWidth / 2;
@@ -183,7 +187,7 @@ function update_lives(lost_lives) {
   if (lost_lives === 0) {
     return;
   } else if (lost_lives === 3) {
-    game_over(); 
+    game_over();
     return;
   }
   for (let i = 0; i < lost_lives; i++) {
@@ -250,37 +254,23 @@ function animate() {
   }
 }
 
-
-// === startmenu===
-document.addEventListener("DOMContentLoaded",()=>{
-  const startMenu = document.getElementById("start-menu");
-  const newGameButton = document.getElementById("new-game-button");
-  const scoreContainer = document.getElementById("score-container");
-  const instructionsContainer = document.querySelector(".instructions");
-
-
-  
-  
-  
-  newGameButton.addEventListener("click",()=>{
-    startMenu.classList.add("hidden");
-    gameContainer.style.display=`block`
-    scoreContainer.style.display=`block`
-    instructionsContainer.style.display=`block`
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  // === Create the bricks for the game ===
+new_game_button.addEventListener("click", () => {
+  start_menu.classList.add("hidden");
+  game_container.style.opacity = `1`;
+  // score_container.style.opacity = `1`;
+  instructions_container.style.opacity = `1`;
+  start_game();
   create_bricks();
-
-  // === start the game ===
-      start_game();
   update_lives(0);
+
   requestAnimationFrame(update);
 });
 
+// ===( start menu )===
 
-  })
-  update_lives();
-  requestAnimationFrame(update)
-})
+document.addEventListener("DOMContentLoaded", () => {
+  game_container.style.opacity = `0`;
+  start_menu.classList.remove("hidden");
+  // score_container.style.opacity = `0`;
+  instructions_container.style.opacity = `0`;
+});
