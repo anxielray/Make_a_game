@@ -40,7 +40,7 @@ body {
   width: 900px;
   height: 700px;
   background-color: black;
-  margin: auto;
+  left: 25%;
   justify-content: center;
   overflow: hidden;
   /* display: none; used when displaying the start menu*/

@@ -54,25 +54,70 @@ function create_bricks() {
 
 // // === event listener to control the paddle movements ===
 document.addEventListener("keydown", (e) => {
-  const furthest_x_paddle = paddle_x + 200;
-  
   if (e.key === "ArrowLeft" && paddle_x > 0 && arrow_controls) {
-    // if (arrow_controls) {
+    let temp_paddle_x = paddle_x + game_container.offsetLeft;
+    // if (paddle_x - 40 < 0) {
+    //   if (temp_paddle_x - 40 == 10) {
+    //     paddle_x -= 10;
+    //   } else if (paddle_x - 40 == 20) {
+    //     paddle_x -= 20
+    //   } else {
+    //     paddle_x -= 30;
+    //   }
+    // } else if (paddle_x - 40 >= /* game_container.offsetLeft */ 0) {
+    //   paddle_x -= 40;
     // }
-    if (paddle_x - 40 <= game_container.clientLeft) {
-      paddle.style.left = `${game_container.clientLeft}px`;
-    } else {
-      paddle_x -= 40;
+    if (paddle_x == 690) {
+      console.log("minusing 20")
+      paddle_x -= 20;
     }
-  } else if (e.key === "ArrowRight" && paddle_x < 800 && arrow_controls) {
-    if (
-      furthest_x_paddle + 40 >=
-      game_container.clientLeft + game_container.clientWidth
-    ) {
-      paddle.style.left =
-        game_container.clientLeft + game_container.clientWidth;
-    } else {
-      paddle_x += 40;
+    if (paddle_x < 0){
+      console.log("minusing rem")
+      paddle_x -= (paddle_x)
+    }
+    if (paddle_x > 0) {
+      console.log("minusing 40")
+      paddle_x -= 40
+    }
+
+  } else if (e.key === "ArrowRight" && arrow_controls) {
+    // if (furthest_paddle_x + 40 > 890) {
+    //   if (paddle_x + 40 == 910) {
+    //     console.log(`you added 10 to get  ${paddle_x}`);
+    //     console.log(`this was paddle_x  ${paddle_x}`);
+    //     paddle_x += 10;
+    //   } else if (paddle_x + 40 == 920) {
+    //     console.log(`you added 20 to get  ${paddle_x}`);
+    //     console.log(`this was paddle_x  ${paddle_x}`);
+    //     paddle_x += 20;
+    //   } else {
+    //     console.log(`you added 30 to get  ${paddle_x}`);
+    //     console.log(`this was paddle_x  ${paddle_x}`);
+    //     paddle_x += 30;
+    //   }
+    // } else if (paddle_x + 40 <= 890) {
+    //   console.log(`you added 40 to get  ${paddle_x}`);
+    //   console.log(`this was paddle_x  ${paddle_x}`);
+    //   paddle_x += 40;
+    // }
+    // if (paddle_x  == 660){
+    //   console.log("30")
+    //   paddle_x += 30
+    // }else if (paddle_x == 670) {
+    //   console.log("20")
+    //   paddle_x += 20
+    // }else
+    if (paddle_x == 0) {
+      console.log("adding 30")
+      paddle_x += 30;
+    }
+    if (paddle_x > 690){
+      console.log("adding rem")
+      paddle_x += (690-paddle_x)
+    }
+    if (paddle_x < 660) {
+      console.log("adding 40")
+      paddle_x += 40
     }
   } else if (e.code === "Space" || e.key === "p") {
     if (ball_stuck_to_paddle && game_state === "playing") {
@@ -113,7 +158,7 @@ function show_pause_menu() {
 // ==== This is a function to resume the game from the pause menu ===
 function resume_game() {
   game_state = "playing";
-  arrow_controls = false;
+  arrow_controls = true;
   hide_pause_menu();
 }
 
@@ -139,7 +184,7 @@ function update() {
     // == ball and Wall collisions ===
     if (
       ball_x <= 0 ||
-      ball_x >= game_container.clientWidth + game_container.clientLeft
+      ball_x >= game_container.offsetLeft /* + game_container.clientLef*/
     )
       ballDX *= -1;
     if (ball_y <= 0) ballDY *= -1;
@@ -150,11 +195,14 @@ function update() {
 
       // === simulate horizontal ball bouncing off the paddle on collision ===
       let hitPoint = (ball_x - paddle_x) / 200;
-      ballDX = 3 * (hitPoint - 0.5); // This gives a spread between -1.5 to 1.5
+      ballDX = 3 * (hitPoint - 0.5);
     }
 
     // Bottom collision (lose a life)
-    if (ball_y > 650) {
+    // === the ball is totally lost when it goes more than (2/3) of the height of the paddle ====
+    const third_paddle_y = 2 * (paddle.clientHeight / 3);
+    const max_ball_y = 650 + third_paddle_y;
+    if (ball_y > max_ball_y) {
       lives--;
       if (lives === 0) {
         game_over();
@@ -235,48 +283,8 @@ function reset_ball_paddle() {
   reset_ball();
 }
 
-// == Reload the page to restart the game ===
-function restart_game() {
-  location.reload();
-  start_game();
-}
-
 function updateScore() {
   document.getElementById("score").textContent = `Score: ${score}`;
-}
-
-// === function to show the game over menu ===
-function game_over() {
-  start_menu.classList.add("hidden");
-  game_container.style.display = `none`;
-  score_container.style.display = `block`;
-  instructions_container.style.display = `none`;
-  game_state = "over";
-  arrow_controls = false;
-
-  let scores = JSON.parse(localStorage.getItem("scores")) || [];
-  scores.push({ name: playerName, score: score });
-  localStorage.setItem("scores", JSON.stringify(scores));
-
-  const scorelist = document.getElementById("score-list");
-  scorelist.innerHTML = ``;
-  // score=0;
-  console.log(scores.length);
-  if (scores.length === 0 || (scores.length === 1 && scores[0] == 0)) {
-    scorelist.innerHTML = `<p>No scores yet</p>`;
-  } else {
-    scores.sort((a, b) => b - a);
-    scores.forEach(function (entry) {
-      const li = document.createElement("li");
-      li.textContent = `${entry.name}:${entry.score}`;
-      scorelist.appendChild(li);
-    });
-  }
-  scorelist.innerHTML += `<button id="restart-button">Restart</button><a class="back-button" onclick="startMenu()">Back to Main menu</a>`;
-
-  document.getElementById("restart-button").addEventListener("click", () => {
-    restart_game();
-  });
 }
 
 // === function to start the game ===
@@ -291,7 +299,6 @@ function start_game() {
 // === This is a function to animate the game ===
 function animate() {
   if (game_state === "playing" && arrow_controls) {
-
     update();
   }
 }
@@ -344,7 +351,7 @@ function startCountdown() {
 }
 
 function startMenu() {
-  arrow_controls = false; 
+  arrow_controls = false;
   start_menu.classList.remove("hidden");
   game_container.style.display = `none`;
   score_container.style.display = `none`;
@@ -353,7 +360,7 @@ function startMenu() {
 
 // === function to show the game over menu ===
 function game_over() {
-  startMenuButton.classList.add("hidden");
+  start_menu.classList.add("hidden");
   game_container.style.display = `none`;
   score_container.style.display = `block`;
   instructions_container.style.display = `none`;
@@ -374,11 +381,12 @@ function game_over() {
     scores.sort((a, b) => b - a);
     scores.forEach(function (entry) {
       const li = document.createElement("li");
+      li.style.color = "black";
       li.textContent = `${entry.name}:${entry.score}`;
       scorelist.appendChild(li);
     });
   }
-  scorelist.innerHTML += `<button id="restart-button">Restart</button><a class="back-button" onclick="startMenu()">Back to Main menu</a>`;
+  scorelist.innerHTML += `<button id="restart-button" onclick="start_game()">Restart</button><a class="back-button" onclick="startMenu()">Back to Main menu</a>`;
 
   document.getElementById("restart-button").addEventListener("click", () => {
     reset_game();
