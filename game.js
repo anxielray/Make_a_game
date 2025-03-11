@@ -26,6 +26,7 @@ let space_enabled = true;
 let gameTimer = 0;
 let timerInterval;
 
+
 // === function create bricks for the game ===
 function create_bricks() {
   const rows = 6;
@@ -54,6 +55,73 @@ function create_bricks() {
   }
 }
 
+function create_bricks_level2() {
+  // Clear any existing bricks first
+  const existingBricks = document.querySelectorAll(".brick");
+  existingBricks.forEach((brick) => brick.remove());
+
+  const brickWidth = 60;
+  const brickHeight = 30;
+  const spacing = 10;
+
+  // For a true hourglass shape
+  const maxRows = 11; // Odd number works best for symmetry
+  const maxBricksInRow = 15; // Maximum bricks in the top and bottom rows
+
+  // Calculate starting position to center the pattern
+  const startX =
+    (game_container.clientWidth - maxBricksInRow * (brickWidth + spacing)) / 2;
+  let currentY = 50; // Starting Y position
+
+  // Create hourglass pattern
+  for (let row = 0; row < maxRows; row++) {
+    // Calculate how many bricks should be in this row
+    // For hourglass: start with max, decrease to min at middle, then increase back to max
+    const middleRow = Math.floor(maxRows / 2);
+    let bricksInThisRow;
+
+    if (row <= middleRow) {
+      // Top half of hourglass (including middle) - decreasing width
+      bricksInThisRow = maxBricksInRow - row * 2;
+    } else {
+      // Bottom half of hourglass - increasing width
+      bricksInThisRow = maxBricksInRow - (maxRows - row - 1) * 2;
+    }
+
+    // Calculate starting X position for this row to center it
+    const rowStartX =
+      startX +
+      ((maxBricksInRow - bricksInThisRow) * (brickWidth + spacing)) / 2;
+
+    // Create bricks for this row
+    for (let col = 0; col < bricksInThisRow; col++) {
+      const brick = document.createElement("div");
+      brick.classList.add("brick");
+      brick.hit = false;
+      brick.dataset.health = 1; //set default health
+
+      // Position the brick
+      brick.style.left = `${rowStartX + col * (brickWidth + spacing)}px`;
+      brick.style.top = `${currentY}px`;
+      brick.style.width = `${brickWidth}px`;
+      brick.style.height = `${brickHeight}px`;
+
+      // Add some visual interest with different colors based on position
+      const colorIndex = (row + col) % 5;
+      const colors = ["#ff0000", "#33FF57", "#3357FF", "#F3FF33", "#FF33F3"];
+      brick.style.backgroundColor = colors[colorIndex];
+      if (colorIndex === 0) {
+        brick.dataset.health = 3;
+      }
+      brick.style.border = "1px solid white";
+
+      game_container.appendChild(brick);
+    }
+
+    // Move to the next row
+    currentY += brickHeight + spacing;
+  }
+}
 // // === event listener to control the paddle movements ===
 document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft" && paddle_x > 0 && arrow_controls) {
@@ -66,8 +134,7 @@ document.addEventListener("keydown", (e) => {
       arrow_controls = true;
       ball_stuck_to_paddle = false;
       ballDY = -3;
-      ballDX = (Math.random() - 0.5) * 2;
-      space_enabled = false;
+      ballDX = -ballDX;
     } else if (game_state === "playing") {
       game_state = "paused";
       arrow_controls = false;
@@ -138,40 +205,55 @@ function update() {
     ball_x += ballDX;
     ball_y += ballDY;
 
-    // Ball & Wall Collisions
-    if (ball_x <= 0 || ball_x >= game_container.clientWidth - ball.clientWidth)
-      ballDX *= -1;
-    if (ball_y <= 0) ballDY *= -1;
-
-    // Ball & Paddle Collision
-    if (
-      ball_y >= 650 &&
-      ball_x >= paddle_x &&
-      ball_x <= paddle_x + paddle.clientWidth
-    ) {
-      ballDY = -Math.abs(ballDY);
-      let hitPoint = (ball_x - paddle_x) / paddle.clientWidth;
-      ballDX = 3 * (hitPoint - 0.5);
-    }
-
-    // Lose a life when ball falls below screen
-    if (ball_y >= game_container.clientHeight) {
-      lives--;
-      if (lives === 0) {
-        game_over();
-        return;
-      } else {
-        reset_ball();
-        update_lives(3 - lives);
-      }
-    }
+    handleWallCollision();
+    handlePaddleCollision();
+    handleBrickCollision();
   }
 
-  // Brick Collision - Ensures only one brick is hit
+  // Update ball position
+  ball.style.left = `${ball_x}px`;
+  ball.style.top = `${ball_y}px`;
+  requestAnimationFrame(update);
+}
+
+function handleWallCollision() {
+  if (ball_x <= 0 || ball_x >= game_container.clientWidth - ball.clientWidth) {
+    ballDX *= -1;
+  }
+  if (ball_y <= 0) {
+    ballDY *= -1;
+  }
+}
+
+function handlePaddleCollision() {
+  if (
+    ball_y >= 650 &&
+    ball_x >= paddle_x &&
+    ball_x <= paddle_x + paddle.clientWidth
+  ) {
+    ballDY = -Math.abs(ballDY);
+    let hitPoint = (ball_x - paddle_x) / paddle.clientWidth;
+    ballDX = 3 * (hitPoint - 0.5);
+  }
+
+  if (ball_y >= game_container.clientHeight) {
+    lives--;
+    if (lives === 0) {
+      game_over();
+      return;
+    } else {
+      reset_ball();
+      update_lives(3 - lives);
+    }
+  }
+}
+
+function handleBrickCollision() {
   let bricks = document.querySelectorAll(".brick");
+  let ball_rect = ball.getBoundingClientRect();
+
   for (let brick of bricks) {
     let brick_rect = brick.getBoundingClientRect();
-    let ball_rect = ball.getBoundingClientRect();
 
     if (
       ball_rect.left < brick_rect.right &&
@@ -179,39 +261,49 @@ function update() {
       ball_rect.top < brick_rect.bottom &&
       ball_rect.bottom > brick_rect.top
     ) {
-      // Calculate the intersection depth
-      let intersectX = Math.min(
-        ball_rect.right - brick_rect.left,
-        brick_rect.right - ball_rect.left
-      );
-      let intersectY = Math.min(
-        ball_rect.bottom - brick_rect.top,
-        brick_rect.bottom - ball_rect.top
-      );
-
-      // Determine bounce direction based on smallest intersection
-      if (intersectX < intersectY) {
-        ballDX *= -1;
-      } else {
-        ballDY *= -1;
+      // Check if the brick is on cooldown
+      if (brick.dataset.cooldown) {
+        continue; // Skip this brick if it's on cooldown
       }
 
-      brick.remove();
+      
+      // Decrease brick health
+      let health = parseInt(brick.dataset.health||1, 10);
+      console.log(health)
+      health--;
+
+      if (health <= 0) {
+        // Remove brick if health is zero
+        brick.remove();
+      } else {
+        // Update brick appearance based on remaining health
+        brick.dataset.health = health;
+        if (health === 2) {
+          brick.style.opacity = 0.5;
+        } else if (health === 1) {
+          brick.style.opacity = 0.2;
+        }
+      }
+
+      // Reverse ball direction
+      ballDY = -ballDY;
+
+      // Update score
       score += 10;
       score_display.textContent = score;
 
-      // Check if all bricks are cleared
-      if (document.querySelectorAll(".brick").length === 0) {
-        showVictoryScreen();
-      }
+       // Set a cooldown for the brick
+       brick.dataset.cooldown = true;
+       setTimeout(() => {
+         delete brick.dataset.cooldown;
+       }, 100); // Cooldown period in milliseconds
+
+       // Check if level is complete
+      checkLevelCompletion();
+      // Exit loop after handling collision
       break;
     }
   }
-
-  // Update ball position
-  ball.style.left = `${ball_x}px`;
-  ball.style.top = `${ball_y}px`;
-  requestAnimationFrame(update);
 }
 
 function update_lives(lost_lives) {
@@ -342,6 +434,23 @@ function startMenu() {
   game_container.style.display = `none`;
   score_container.style.display = `none`;
   instructions_container.style.display = `none`;
+}
+// Add a new function to check if all bricks are cleared
+function checkLevelCompletion() {
+  const bricks = document.querySelectorAll(".brick");
+  if (bricks.length === 0) {
+    // All bricks are cleared, move to the next level
+    transitionToLevel2();
+  }
+}
+
+// Function to transition to level 2
+function transitionToLevel2() {
+  alert("Level 1 Complete! Moving to Level 2...");
+  reset_ball_paddle();
+  create_bricks_level2();
+  game_state = "playing";
+  requestAnimationFrame(update);
 }
 
 // === function to show the game over menu ===
