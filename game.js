@@ -203,40 +203,55 @@ function update() {
     ball_x += ballDX;
     ball_y += ballDY;
 
-    // Ball & Wall Collisions
-    if (ball_x <= 0 || ball_x >= game_container.clientWidth - ball.clientWidth)
-      ballDX *= -1;
-    if (ball_y <= 0) ballDY *= -1;
-
-    // Ball & Paddle Collision
-    if (
-      ball_y >= 650 &&
-      ball_x >= paddle_x &&
-      ball_x <= paddle_x + paddle.clientWidth
-    ) {
-      ballDY = -Math.abs(ballDY);
-      let hitPoint = (ball_x - paddle_x) / paddle.clientWidth;
-      ballDX = 3 * (hitPoint - 0.5);
-    }
-
-    // Lose a life when ball falls below screen
-    if (ball_y >= game_container.clientHeight) {
-      lives--;
-      if (lives === 0) {
-        game_over();
-        return;
-      } else {
-        reset_ball();
-        update_lives(3 - lives);
-      }
-    }
+    handleWallCollision();
+    handlePaddleCollision();
+    handleBrickCollision();
   }
 
-  // Brick Collision - Ensures only one brick is hit
+  // Update ball position
+  ball.style.left = `${ball_x}px`;
+  ball.style.top = `${ball_y}px`;
+  requestAnimationFrame(update);
+}
+
+function handleWallCollision() {
+  if (ball_x <= 0 || ball_x >= game_container.clientWidth - ball.clientWidth) {
+    ballDX *= -1;
+  }
+  if (ball_y <= 0) {
+    ballDY *= -1;
+  }
+}
+
+function handlePaddleCollision() {
+  if (
+    ball_y >= 650 &&
+    ball_x >= paddle_x &&
+    ball_x <= paddle_x + paddle.clientWidth
+  ) {
+    ballDY = -Math.abs(ballDY);
+    let hitPoint = (ball_x - paddle_x) / paddle.clientWidth;
+    ballDX = 3 * (hitPoint - 0.5);
+  }
+
+  if (ball_y >= game_container.clientHeight) {
+    lives--;
+    if (lives === 0) {
+      game_over();
+      return;
+    } else {
+      reset_ball();
+      update_lives(3 - lives);
+    }
+  }
+}
+
+function handleBrickCollision() {
   let bricks = document.querySelectorAll(".brick");
+  let ball_rect = ball.getBoundingClientRect();
+
   for (let brick of bricks) {
     let brick_rect = brick.getBoundingClientRect();
-    let ball_rect = ball.getBoundingClientRect();
 
     if (
       ball_rect.left < brick_rect.right &&
@@ -244,34 +259,49 @@ function update() {
       ball_rect.top < brick_rect.bottom &&
       ball_rect.bottom > brick_rect.top
     ) {
-      if (!brick.hit) {
-        brick.hit=true
-        console.log(brick.dataset.health);
-        brick.dataset.health--;
-        if (brick.dataset.health <= 0) {
-          brick.remove();
-        } else {
-          // update brick's appearance based on its health
-          if (brick.health === 2) {
-            brick.style.opacity = 0.5;
-            brick.hit=false;
-          } else if (brick.health === 1) {
-            brick.style.opacity = 0.2;
-          }
-          
-        }
-        ballDY = -ballDY;
-        score += 10;
-        score_display.textContent = score;
-        break; // Stop checking after the first hit
+      // Check if the brick is on cooldown
+      if (brick.dataset.cooldown) {
+        continue; // Skip this brick if it's on cooldown
       }
+
+      
+      // Decrease brick health
+      let health = parseInt(brick.dataset.health||1, 10);
+      console.log(health)
+      health--;
+
+      if (health <= 0) {
+        // Remove brick if health is zero
+        brick.remove();
+      } else {
+        // Update brick appearance based on remaining health
+        brick.dataset.health = health;
+        if (health === 2) {
+          brick.style.opacity = 0.5;
+        } else if (health === 1) {
+          brick.style.opacity = 0.2;
+        }
+      }
+
+      // Reverse ball direction
+      ballDY = -ballDY;
+
+      // Update score
+      score += 10;
+      score_display.textContent = score;
+
+       // Set a cooldown for the brick
+       brick.dataset.cooldown = true;
+       setTimeout(() => {
+         delete brick.dataset.cooldown;
+       }, 100); // Cooldown period in milliseconds
+
+       // Check if level is complete
+      checkLevelCompletion();
+      // Exit loop after handling collision
+      break;
     }
   }
-
-  // Update ball position
-  ball.style.left = `${ball_x}px`;
-  ball.style.top = `${ball_y}px`;
-  requestAnimationFrame(update);
 }
 
 function update_lives(lost_lives) {
@@ -351,7 +381,7 @@ new_game_button.addEventListener("click", () => {
   game_container.style.display = `block`;
   score_container.style.display = `block`;
   instructions_container.style.display = `block`;
-  create_bricks_level2();
+  create_bricks();
   update_lives();
   requestAnimationFrame(update);
   startCountdown();
@@ -393,6 +423,23 @@ function startMenu() {
   game_container.style.display = `none`;
   score_container.style.display = `none`;
   instructions_container.style.display = `none`;
+}
+// Add a new function to check if all bricks are cleared
+function checkLevelCompletion() {
+  const bricks = document.querySelectorAll(".brick");
+  if (bricks.length === 0) {
+    // All bricks are cleared, move to the next level
+    transitionToLevel2();
+  }
+}
+
+// Function to transition to level 2
+function transitionToLevel2() {
+  alert("Level 1 Complete! Moving to Level 2...");
+  reset_ball_paddle();
+  create_bricks_level2();
+  game_state = "playing";
+  requestAnimationFrame(update);
 }
 
 // === function to show the game over menu ===
