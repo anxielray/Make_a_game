@@ -210,7 +210,7 @@ function update() {
 
 function update_lives(lost_lives) {
   const hearts = document.querySelectorAll(".heart");
-  if (lost_lives === 0) {
+  if (lost_lives === 0 || !lost_lives) {
     return;
   } else if (lost_lives === 3) {
     game_over();
@@ -339,48 +339,162 @@ function startMenu() {
 
 // === function to show the game over menu ===
 function game_over() {
-  start_menu.classList.add("hidden");
-  game_container.style.display = "none";
-  score_container.style.display = "block";
-  instructions_container.style.display = "none";
-  game_state = "over";
-  arrow_controls = false;
+    clearAllOverlays();
+    start_menu.classList.add("hidden");
+    game_container.style.display = "none";
+    score_container.style.display = "block";
+    instructions_container.style.display = "none";
+    game_state = "over";
+    arrow_controls = false;
 
-  let scores = JSON.parse(localStorage.getItem("scores")) || [];
-  scores.push({ name: playerName, score: score, time: gameTimer });
-  localStorage.setItem("scores", JSON.stringify(scores));
-
-  const scorelist = document.getElementById("score-list");
-  scorelist.innerHTML = `
-    <h2>Game Over, ${playerName}!</h2>
-    <div style="margin: 20px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
-        <p>Your Final Score: ${score}</p>
-        <p>Time Played: ${Math.floor(gameTimer / 60)}m ${gameTimer % 60}s</p>
-        <p>Bricks Destroyed: ${score / 10}</p>
-    </div>
-    <h3>High Scores</h3>
-  `;
-
-  if (scores.length === 0) {
-    scorelist.innerHTML += `<p>No scores yet</p>`;
-  } else {
-    scores.sort((a, b) => b.score - a.score);
-    const topScores = scores.slice(0, 5);
-    topScores.forEach((entry, index) => {
-      const li = document.createElement("li");
-      li.style.color = index === 0 ? "gold" : "white";
-      li.style.padding = "10px";
-      li.style.margin = "5px";
-      li.style.background = "rgba(0,0,0,0.5)";
-      li.textContent = `${index + 1}. ${entry.name}: ${entry.score} points (${Math.floor(entry.time / 60)}m ${entry.time % 60}s)`;
-      scorelist.appendChild(li);
+    let scores = JSON.parse(localStorage.getItem("scores")) || [];
+    scores.push({ 
+        name: playerName, 
+        score: score, 
+        time: gameTimer,
+        livesRemaining: lives 
     });
-  }
+    localStorage.setItem("scores", JSON.stringify(scores));
 
-  scorelist.innerHTML += `
-    <button id="restart-button" onclick="start_game()" style="margin: 10px;">Play Again</button>
-    <a class="back-button" onclick="startMenu()">Back to Main Menu</a>
-  `;
+    const scorelist = document.getElementById("score-list");
+    scorelist.innerHTML = `
+        <h2>Game Over, ${playerName}!</h2>
+        <div class="game-stats">
+            <p>Final Score: ${score}</p>
+            <p>Time Played: ${Math.floor(gameTimer / 60)}m ${gameTimer % 60}s</p>
+            <p>Bricks Destroyed: ${score / 10}</p>
+        </div>
+        <div class="leaderboard-container">
+            <h3>High Scores</h3>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Score</th>
+                        <th>Time</th>
+                        <th>Lives</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${generateLeaderboardRows(scores)}
+                </tbody>
+            </table>
+        </div>
+        <div class="game-controls">
+            <button class="game-button" onclick="restartGame()">Play Again</button>
+            <button class="game-button" onclick="startMenu()">Back to Main Menu</button>
+        </div>
+    `;
+}
+
+function generateLeaderboardRows(scores) {
+    return scores
+        .sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            if (b.time !== a.time) return a.time - b.time;
+            return b.livesRemaining - a.livesRemaining;
+        })
+        .slice(0, 5)
+        .map((entry, index) => `
+            <tr class="${index === 0 ? 'gold-rank' : ''}">
+                <td>${index + 1}</td>
+                <td>${entry.name}</td>
+                <td>${entry.score}</td>
+                <td>${Math.floor(entry.time / 60)}m ${entry.time % 60}s</td>
+                <td>${entry.livesRemaining}</td>
+            </tr>
+        `).join('');
+}
+
+function showVictoryScreen() {
+    clearAllOverlays();
+    game_state = "victory";
+    arrow_controls = false;
+    
+    const victoryOverlay = document.createElement("div");
+    victoryOverlay.className = "victory-overlay";
+    
+    // Create confetti
+    for (let i = 0; i < 100; i++) {
+        createConfetti(victoryOverlay);
+    }
+    
+    let scores = JSON.parse(localStorage.getItem("scores")) || [];
+    scores.push({ 
+        name: playerName, 
+        score: score, 
+        time: gameTimer,
+        livesRemaining: lives 
+    });
+    localStorage.setItem("scores", JSON.stringify(scores));
+    
+    victoryOverlay.innerHTML += `
+        <div class="victory-content">
+            <h1>🎉 Congratulations ${playerName}! 🎉</h1>
+            <div class="victory-stats">
+                <p>You completed the game in ${Math.floor(gameTimer / 60)}m ${gameTimer % 60}s</p>
+                <p>Final Score: ${score}</p>
+                <p>Lives Remaining: ${lives}</p>
+            </div>
+            <div class="victory-buttons">
+                <button class="game-button" onclick="showLeaderboard()">View Leaderboard</button>
+                <button class="game-button" onclick="restartGame()">Play Again</button>
+                <button class="game-button" onclick="startMenu()">Back to Menu</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(victoryOverlay);
+}
+
+function showLeaderboard() {
+    const leaderboardOverlay = document.createElement("div");
+    leaderboardOverlay.className = "leaderboard-overlay";
+    
+    const scores = JSON.parse(localStorage.getItem("scores")) || [];
+    
+    leaderboardOverlay.innerHTML = `
+        <div class="leaderboard-content">
+            <h2>Leaderboard</h2>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Score</th>
+                        <th>Time</th>
+                        <th>Lives</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${generateLeaderboardRows(scores)}
+                </tbody>
+            </table>
+            <button class="game-button" onclick="this.parentElement.parentElement.remove()">Close</button>
+        </div>
+    `;
+    
+    document.body.appendChild(leaderboardOverlay);
+}
+
+function clearAllOverlays() {
+    // Remove any existing overlays
+    const overlays = document.querySelectorAll('.victory-overlay, .leaderboard-overlay');
+    overlays.forEach(overlay => overlay.remove());
+}
+
+function restartGame() {
+    clearAllOverlays();
+    // Clear all bricks
+    const bricks = document.querySelectorAll('.brick');
+    bricks.forEach(brick => brick.remove());
+    // Create new bricks
+    create_bricks();
+    // Reset game state
+    reset_game();
+    // Start countdown
+    startCountdown();
 }
 
 document.addEventListener("DOMContentLoaded", startMenu);
@@ -391,41 +505,6 @@ function updateTimer() {
     const seconds = gameTimer % 60;
     document.getElementById('timer').textContent = 
         `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
-
-function showVictoryScreen() {
-    game_state = "victory";
-    arrow_controls = false;
-    
-    // Create victory overlay
-    const victoryOverlay = document.createElement("div");
-    victoryOverlay.style.position = "absolute";
-    victoryOverlay.style.top = "0";
-    victoryOverlay.style.left = "0";
-    victoryOverlay.style.width = "100%";
-    victoryOverlay.style.height = "100%";
-    victoryOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
-    victoryOverlay.style.color = "gold";
-    victoryOverlay.style.fontSize = "48px";
-    victoryOverlay.style.display = "flex";
-    victoryOverlay.style.flexDirection = "column";
-    victoryOverlay.style.justifyContent = "center";
-    victoryOverlay.style.alignItems = "center";
-    victoryOverlay.style.zIndex = "1000";
-    
-    // Create confetti
-    for (let i = 0; i < 100; i++) {
-        createConfetti(victoryOverlay);
-    }
-    
-    victoryOverlay.innerHTML += `
-        <h1>🎉 Congratulations ${playerName}! 🎉</h1>
-        <p style="font-size: 24px">You won with ${lives} lives remaining!</p>
-        <p style="font-size: 24px">Final Score: ${score}</p>
-        <button onclick="startMenu()" style="padding: 10px 20px; margin-top: 20px; font-size: 20px; cursor: pointer;">Back to Menu</button>
-    `;
-    
-    document.body.appendChild(victoryOverlay);
 }
 
 function createConfetti(parent) {
