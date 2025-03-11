@@ -25,6 +25,8 @@ let ball_stuck_to_paddle = true;
 let space_enabled = true;
 let gameTimer = 0;
 let timerInterval;
+let currentLevel=1
+let playerName =""
 
 
 // === function create bricks for the game ===
@@ -231,9 +233,18 @@ function handlePaddleCollision() {
     ball_x >= paddle_x &&
     ball_x <= paddle_x + paddle.clientWidth
   ) {
-    ballDY = -Math.abs(ballDY);
+    ballDY = -Math.abs(ballDY); // Ensure the ball bounces upwards
+
+    // Calculate hit point on the paddle (0 to 1)
     let hitPoint = (ball_x - paddle_x) / paddle.clientWidth;
-    ballDX = 3 * (hitPoint - 0.5);
+
+    // Adjust ballDX based on hit point, keeping the speed constant
+    const maxAngle = Math.PI / 3; // 60 degrees
+    const angle = (hitPoint - 0.5) * maxAngle;
+    const speed = Math.sqrt(ballDX * ballDX + ballDY * ballDY);
+
+    ballDX = speed * Math.sin(angle);
+    ballDY = -speed * Math.cos(angle); // Ensure it bounces upwards
   }
 
   if (ball_y >= game_container.clientHeight) {
@@ -382,10 +393,12 @@ function animate() {
 
 // === startmenu===
 new_game_button.addEventListener("click", () => {
-  playerName = prompt("Enter your name:");
-  if (!playerName) {
-    alert("Name is required to start the game.");
-    return;
+  if (playerName===""){
+    playerName = prompt("Enter your name:");
+    if (!playerName) {
+      alert("Name is required to start the game.");
+      return;
+    }
   }
   start_menu.classList.add("hidden");
   game_container.style.display = `block`;
@@ -395,10 +408,12 @@ new_game_button.addEventListener("click", () => {
   update_lives();
   requestAnimationFrame(update);
   startCountdown();
+  currentLevel=1
 });
 
 // === CountDown ===
 function startCountdown() {
+  reset_ball_paddle();
   let countdown = 3;
   const countdownOverlay = document.createElement("div");
   countdownOverlay.style.position = "absolute";
@@ -439,8 +454,13 @@ function startMenu() {
 function checkLevelCompletion() {
   const bricks = document.querySelectorAll(".brick");
   if (bricks.length === 0) {
+    if (currentLevel===1){
+      transitionToLevel2();
+      currentLevel++
+    }else{
+      showVictoryScreen();
+    }
     // All bricks are cleared, move to the next level
-    transitionToLevel2();
   }
 }
 
@@ -448,6 +468,7 @@ function checkLevelCompletion() {
 function transitionToLevel2() {
   alert("Level 1 Complete! Moving to Level 2...");
   reset_ball_paddle();
+ 
   create_bricks_level2();
   game_state = "playing";
   requestAnimationFrame(update);
@@ -529,6 +550,9 @@ function generateLeaderboardRows(scores) {
 
 function showVictoryScreen() {
   clearAllOverlays();
+  game_container.style.display = `none`;
+  instructions_container.style.display = `none`;
+
   game_state = "victory";
   arrow_controls = false;
 
@@ -571,6 +595,10 @@ function showVictoryScreen() {
 
 function showLeaderboard() {
   clearAllOverlays();
+  const victoryContent = document.querySelector('.victory-content');
+  if (victoryContent) {
+      victoryContent.style.display = 'none';
+  }
   const leaderboardOverlay = document.createElement("div");
   leaderboardOverlay.className = "leaderboard-overlay";
 
@@ -593,7 +621,7 @@ function showLeaderboard() {
                     ${generateLeaderboardRows(scores)}
                 </tbody>
             </table>
-            <button class="game-button" onclick="this.parentElement.parentElement.remove(); victoryOverlay.show()">Close</button>
+            <button class="game-button" onclick="startMenu()">Close</button>
         </div>
     `;
 
@@ -604,7 +632,7 @@ function clearAllOverlays() {
   const overlays = document.querySelectorAll(
     ".victory-overlay, .leaderboard-overlay"
   );
-  overlays.forEach((overlay) => overlay.classList.add("hidden"));
+  overlays.forEach((overlay) => overlay.style.display="none");
 }
 
 function restartGame() {
