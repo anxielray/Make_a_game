@@ -172,32 +172,39 @@ function update() {
   for (let brick of bricks) {
     let brick_rect = brick.getBoundingClientRect();
     let ball_rect = ball.getBoundingClientRect();
-    
-    if (ball_rect.left < brick_rect.right && 
-        ball_rect.right > brick_rect.left && 
-        ball_rect.top < brick_rect.bottom && 
-        ball_rect.bottom > brick_rect.top) {
-        
-        // Calculate the intersection depth
-        let intersectX = Math.min(ball_rect.right - brick_rect.left, brick_rect.right - ball_rect.left);
-        let intersectY = Math.min(ball_rect.bottom - brick_rect.top, brick_rect.bottom - ball_rect.top);
-        
-        // Determine bounce direction based on smallest intersection
-        if (intersectX < intersectY) {
-            ballDX *= -1;
-        } else {
-            ballDY *= -1;
-        }
-        
-        brick.remove();
-        score += 10;
-        score_display.textContent = score;
-        
-        // Check if all bricks are cleared
-        if (document.querySelectorAll(".brick").length === 0) {
-            showVictoryScreen();
-        }
-        break;
+
+    if (
+      ball_rect.left < brick_rect.right &&
+      ball_rect.right > brick_rect.left &&
+      ball_rect.top < brick_rect.bottom &&
+      ball_rect.bottom > brick_rect.top
+    ) {
+      // Calculate the intersection depth
+      let intersectX = Math.min(
+        ball_rect.right - brick_rect.left,
+        brick_rect.right - ball_rect.left
+      );
+      let intersectY = Math.min(
+        ball_rect.bottom - brick_rect.top,
+        brick_rect.bottom - ball_rect.top
+      );
+
+      // Determine bounce direction based on smallest intersection
+      if (intersectX < intersectY) {
+        ballDX *= -1;
+      } else {
+        ballDY *= -1;
+      }
+
+      brick.remove();
+      score += 10;
+      score_display.textContent = score;
+
+      // Check if all bricks are cleared
+      if (document.querySelectorAll(".brick").length === 0) {
+        showVictoryScreen();
+      }
+      break;
     }
   }
 
@@ -206,7 +213,6 @@ function update() {
   ball.style.top = `${ball_y}px`;
   requestAnimationFrame(update);
 }
-
 
 function update_lives(lost_lives) {
   const hearts = document.querySelectorAll(".heart");
@@ -330,6 +336,7 @@ function startCountdown() {
 }
 
 function startMenu() {
+  clearAllOverlays();
   arrow_controls = false;
   start_menu.classList.remove("hidden");
   game_container.style.display = `none`;
@@ -339,29 +346,31 @@ function startMenu() {
 
 // === function to show the game over menu ===
 function game_over() {
-    clearAllOverlays();
-    start_menu.classList.add("hidden");
-    game_container.style.display = "none";
-    score_container.style.display = "block";
-    instructions_container.style.display = "none";
-    game_state = "over";
-    arrow_controls = false;
+  clearAllOverlays();
+  start_menu.classList.add("hidden");
+  game_container.style.display = "none";
+  score_container.style.display = "block";
+  instructions_container.style.display = "none";
+  game_state = "over";
+  arrow_controls = false;
 
-    let scores = JSON.parse(localStorage.getItem("scores")) || [];
-    scores.push({ 
-        name: playerName, 
-        score: score, 
-        time: gameTimer,
-        livesRemaining: lives 
-    });
-    localStorage.setItem("scores", JSON.stringify(scores));
+  let scores = JSON.parse(localStorage.getItem("scores")) || [];
+  scores.push({
+    name: playerName,
+    score: score,
+    time: gameTimer,
+    livesRemaining: lives,
+  });
+  localStorage.setItem("scores", JSON.stringify(scores));
 
-    const scorelist = document.getElementById("score-list");
-    scorelist.innerHTML = `
+  const scorelist = document.getElementById("score-list");
+  scorelist.innerHTML = `
         <h2>Game Over, ${playerName}!</h2>
         <div class="game-stats">
             <p>Final Score: ${score}</p>
-            <p>Time Played: ${Math.floor(gameTimer / 60)}m ${gameTimer % 60}s</p>
+            <p>Time Played: ${Math.floor(gameTimer / 60)}m ${
+    gameTimer % 60
+  }s</p>
             <p>Bricks Destroyed: ${score / 10}</p>
         </div>
         <div class="leaderboard-container">
@@ -382,79 +391,83 @@ function game_over() {
             </table>
         </div>
         <div class="game-controls">
-            <button class="game-button" onclick="restartGame()">Play Again</button>
-            <button class="game-button" onclick="startMenu()">Back to Main Menu</button>
+            <button class="game-button" onclick="location.reload()">Play Again</button>
         </div>
     `;
 }
 
 function generateLeaderboardRows(scores) {
-    return scores
-        .sort((a, b) => {
-            if (b.score !== a.score) return b.score - a.score;
-            if (b.time !== a.time) return a.time - b.time;
-            return b.livesRemaining - a.livesRemaining;
-        })
-        .slice(0, 5)
-        .map((entry, index) => `
-            <tr class="${index === 0 ? 'gold-rank' : ''}">
+  return scores
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      if (b.time !== a.time) return a.time - b.time;
+      return b.livesRemaining - a.livesRemaining;
+    })
+    .slice(0, 5)
+    .map(
+      (entry, index) => `
+            <tr class="${index === 0 ? "gold-rank" : ""}">
                 <td>${index + 1}</td>
                 <td>${entry.name}</td>
                 <td>${entry.score}</td>
                 <td>${Math.floor(entry.time / 60)}m ${entry.time % 60}s</td>
                 <td>${entry.livesRemaining}</td>
             </tr>
-        `).join('');
+        `
+    )
+    .join("");
 }
 
 function showVictoryScreen() {
-    clearAllOverlays();
-    game_state = "victory";
-    arrow_controls = false;
-    
-    const victoryOverlay = document.createElement("div");
-    victoryOverlay.className = "victory-overlay";
-    
-    // Create confetti
-    for (let i = 0; i < 100; i++) {
-        createConfetti(victoryOverlay);
-    }
-    
-    let scores = JSON.parse(localStorage.getItem("scores")) || [];
-    scores.push({ 
-        name: playerName, 
-        score: score, 
-        time: gameTimer,
-        livesRemaining: lives 
-    });
-    localStorage.setItem("scores", JSON.stringify(scores));
-    
-    victoryOverlay.innerHTML += `
+  clearAllOverlays();
+  game_state = "victory";
+  arrow_controls = false;
+
+  const victoryOverlay = document.createElement("div");
+  victoryOverlay.className = "victory-overlay";
+
+  // Create confetti
+  for (let i = 0; i < 100; i++) {
+    createConfetti(victoryOverlay);
+  }
+
+  let scores = JSON.parse(localStorage.getItem("scores")) || [];
+  scores.push({
+    name: playerName,
+    score: score,
+    time: gameTimer,
+    livesRemaining: lives,
+  });
+  localStorage.setItem("scores", JSON.stringify(scores));
+
+  victoryOverlay.innerHTML += `
         <div class="victory-content">
             <h1>🎉 Congratulations ${playerName}! 🎉</h1>
             <div class="victory-stats">
-                <p>You completed the game in ${Math.floor(gameTimer / 60)}m ${gameTimer % 60}s</p>
+                <p>You completed the game in ${Math.floor(gameTimer / 60)}m ${
+    gameTimer % 60
+  }s</p>
                 <p>Final Score: ${score}</p>
                 <p>Lives Remaining: ${lives}</p>
             </div>
             <div class="victory-buttons">
                 <button class="game-button" onclick="showLeaderboard()">View Leaderboard</button>
-                <button class="game-button" onclick="restartGame()">Play Again</button>
-                <button class="game-button" onclick="startMenu()">Back to Menu</button>
+                <button class="game-button" onclick="location.reload()">Play Again</button>
             </div>
         </div>
     `;
-    
-    document.body.appendChild(victoryOverlay);
+
+  document.body.appendChild(victoryOverlay);
 }
 
 function showLeaderboard() {
-    const leaderboardOverlay = document.createElement("div");
-    leaderboardOverlay.className = "leaderboard-overlay";
-    
-    const scores = JSON.parse(localStorage.getItem("scores")) || [];
-    
-    leaderboardOverlay.innerHTML = `
+  clearAllOverlays();
+  const leaderboardOverlay = document.createElement("div");
+  leaderboardOverlay.className = "leaderboard-overlay";
+
+  const scores = JSON.parse(localStorage.getItem("scores")) || [];
+
+  leaderboardOverlay.innerHTML = `
         <div class="leaderboard-content">
             <h2>Leaderboard</h2>
             <table class="leaderboard-table">
@@ -471,64 +484,71 @@ function showLeaderboard() {
                     ${generateLeaderboardRows(scores)}
                 </tbody>
             </table>
-            <button class="game-button" onclick="this.parentElement.parentElement.remove()">Close</button>
+            <button class="game-button" onclick="this.parentElement.parentElement.remove(); victoryOverlay.show()">Close</button>
         </div>
     `;
-    
-    document.body.appendChild(leaderboardOverlay);
+
+  document.body.appendChild(leaderboardOverlay);
 }
 
 function clearAllOverlays() {
-    // Remove any existing overlays
-    const overlays = document.querySelectorAll('.victory-overlay, .leaderboard-overlay');
-    overlays.forEach(overlay => overlay.remove());
+  const overlays = document.querySelectorAll(
+    ".victory-overlay, .leaderboard-overlay"
+  );
+  overlays.forEach((overlay) => overlay.classList.add("hidden"));
 }
 
 function restartGame() {
-    clearAllOverlays();
-    // Clear all bricks
-    const bricks = document.querySelectorAll('.brick');
-    bricks.forEach(brick => brick.remove());
-    // Create new bricks
-    create_bricks();
-    // Reset game state
-    reset_game();
-    // Start countdown
-    startCountdown();
+  clearAllOverlays();
+  // Clear all bricks
+  const bricks = document.querySelectorAll(".brick");
+  bricks.forEach((brick) => brick.classList.add("hidden"));
+  create_bricks();
+  reset_game();
+  // Start countdown
+  startCountdown();
 }
 
 document.addEventListener("DOMContentLoaded", startMenu);
 
 // Keep this cleaner version at the end of the file and update it
 function updateTimer() {
-    const minutes = Math.floor(gameTimer / 60);
-    const seconds = gameTimer % 60;
-    document.getElementById('timer').textContent = 
-        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  const minutes = Math.floor(gameTimer / 60);
+  const seconds = gameTimer % 60;
+  document.getElementById("timer").textContent = `${minutes
+    .toString()
+    .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
 function createConfetti(parent) {
-    const confetti = document.createElement("div");
-    const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"];
-    
-    confetti.style.position = "absolute";
-    confetti.style.width = "10px";
-    confetti.style.height = "10px";
-    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-    confetti.style.left = Math.random() * 100 + "%";
-    confetti.style.top = "-10px";
-    confetti.style.transform = "rotate(" + (Math.random() * 360) + "deg)";
-    
-    parent.appendChild(confetti);
-    
-    const animation = confetti.animate([
-        { transform: `translate(0, 0) rotate(0deg)` },
-        { transform: `translate(${Math.random() * 200 - 100}px, ${window.innerHeight}px) rotate(${Math.random() * 720}deg)` }
-    ], {
-        duration: 1000 + Math.random() * 3000,
-        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-    });
-    
-    animation.onfinish = () => confetti.remove();
+  const confetti = document.createElement("div");
+  const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"];
+
+  confetti.style.position = "absolute";
+  confetti.style.width = "10px";
+  confetti.style.height = "10px";
+  confetti.style.backgroundColor =
+    colors[Math.floor(Math.random() * colors.length)];
+  confetti.style.left = Math.random() * 100 + "%";
+  confetti.style.top = "-10px";
+  confetti.style.transform = "rotate(" + Math.random() * 360 + "deg)";
+
+  parent.appendChild(confetti);
+
+  const animation = confetti.animate(
+    [
+      { transform: `translate(0, 0) rotate(0deg)` },
+      {
+        transform: `translate(${Math.random() * 200 - 100}px, ${
+          window.innerHeight
+        }px) rotate(${Math.random() * 720}deg)`,
+      },
+    ],
+    {
+      duration: 1000 + Math.random() * 3000,
+      easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+    }
+  );
+
+  animation.onfinish = () => confetti.remove();
 }
-        
