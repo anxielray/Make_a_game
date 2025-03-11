@@ -55,69 +55,24 @@ function create_bricks() {
 // // === event listener to control the paddle movements ===
 document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft" && paddle_x > 0 && arrow_controls) {
-    let temp_paddle_x = paddle_x + game_container.offsetLeft;
-    // if (paddle_x - 40 < 0) {
-    //   if (temp_paddle_x - 40 == 10) {
-    //     paddle_x -= 10;
-    //   } else if (paddle_x - 40 == 20) {
-    //     paddle_x -= 20
-    //   } else {
-    //     paddle_x -= 30;
-    //   }
-    // } else if (paddle_x - 40 >= /* game_container.offsetLeft */ 0) {
-    //   paddle_x -= 40;
-    // }
-    if (paddle_x == 690) {
-      console.log("minusing 20")
-      paddle_x -= 20;
-    }
-    if (paddle_x < 0){
-      console.log("minusing rem")
-      paddle_x -= (paddle_x)
-    }
-    if (paddle_x > 0) {
-      console.log("minusing 40")
-      paddle_x -= 40
-    }
-
+    paddle_x -= Math.min(40, paddle_x); // Move left but stay in bounds
   } else if (e.key === "ArrowRight" && arrow_controls) {
-    // if (furthest_paddle_x + 40 > 890) {
-    //   if (paddle_x + 40 == 910) {
-    //     console.log(`you added 10 to get  ${paddle_x}`);
-    //     console.log(`this was paddle_x  ${paddle_x}`);
-    //     paddle_x += 10;
-    //   } else if (paddle_x + 40 == 920) {
-    //     console.log(`you added 20 to get  ${paddle_x}`);
-    //     console.log(`this was paddle_x  ${paddle_x}`);
-    //     paddle_x += 20;
-    //   } else {
-    //     console.log(`you added 30 to get  ${paddle_x}`);
-    //     console.log(`this was paddle_x  ${paddle_x}`);
-    //     paddle_x += 30;
-    //   }
-    // } else if (paddle_x + 40 <= 890) {
-    //   console.log(`you added 40 to get  ${paddle_x}`);
-    //   console.log(`this was paddle_x  ${paddle_x}`);
-    //   paddle_x += 40;
-    // }
-    // if (paddle_x  == 660){
-    //   console.log("30")
-    //   paddle_x += 30
-    // }else if (paddle_x == 670) {
-    //   console.log("20")
-    //   paddle_x += 20
-    // }else
-    if (paddle_x == 0) {
-      console.log("adding 30")
-      paddle_x += 30;
-    }
-    if (paddle_x > 690){
-      console.log("adding rem")
-      paddle_x += (690-paddle_x)
-    }
-    if (paddle_x < 660) {
-      console.log("adding 40")
-      paddle_x += 40
+    let max_x = game_container.clientWidth - paddle.clientWidth;
+    paddle_x += Math.min(40, max_x - paddle_x); // Move right but stay in bounds
+  } else if (e.code === "Space" || e.key === "p") {
+    if (ball_stuck_to_paddle && game_state === "playing") {
+      arrow_controls = true;
+      ball_stuck_to_paddle = false;
+      ballDY = -3;
+      ballDX = (Math.random() - 0.5) * 2;
+      space_enabled = false;
+    } else if (game_state === "playing") {
+      game_state = "paused";
+      arrow_controls = false;
+      pause_game();
+    } else if (game_state === "paused") {
+      arrow_controls = true;
+      resume_game();
     }
   } else if (e.code === "Space" || e.key === "p") {
     if (ball_stuck_to_paddle && game_state === "playing") {
@@ -170,39 +125,35 @@ function hide_pause_menu() {
 function update() {
   if (game_state === "paused") {
     arrow_controls = false;
-    requestAnimationFrame(update); // === request for the animation frames recursivelly, this causes a pause-like effect ===
+    requestAnimationFrame(update);
     return;
   }
 
   if (ball_stuck_to_paddle) {
-    ball_x = game_container.clientWidth / 2 - ball.clientWidth / 2;
+    ball_x = paddle_x + paddle.clientWidth / 2 - ball.clientWidth / 2;
     ball_y = 650;
   } else {
     ball_x += ballDX;
     ball_y += ballDY;
 
-    // == ball and Wall collisions ===
-    if (
-      ball_x <= 0 ||
-      ball_x >= game_container.offsetLeft /* + game_container.clientLef*/
-    )
+    // Ball & Wall Collisions
+    if (ball_x <= 0 || ball_x >= game_container.clientWidth - ball.clientWidth)
       ballDX *= -1;
     if (ball_y <= 0) ballDY *= -1;
 
-    // === simulate vertical ball bouncing off the paddle on collision ===
-    if (ball_y >= 650 && ball_x >= paddle_x && ball_x <= paddle_x + 200) {
+    // Ball & Paddle Collision
+    if (
+      ball_y >= 650 &&
+      ball_x >= paddle_x &&
+      ball_x <= paddle_x + paddle.clientWidth
+    ) {
       ballDY = -Math.abs(ballDY);
-
-      // === simulate horizontal ball bouncing off the paddle on collision ===
-      let hitPoint = (ball_x - paddle_x) / 200;
+      let hitPoint = (ball_x - paddle_x) / paddle.clientWidth;
       ballDX = 3 * (hitPoint - 0.5);
     }
 
-    // Bottom collision (lose a life)
-    // === the ball is totally lost when it goes more than (2/3) of the height of the paddle ====
-    const third_paddle_y = 2 * (paddle.clientHeight / 3);
-    const max_ball_y = 650 + third_paddle_y;
-    if (ball_y > max_ball_y) {
+    // Lose a life when ball falls below screen
+    if (ball_y >= game_container.clientHeight) {
       lives--;
       if (lives === 0) {
         game_over();
@@ -214,10 +165,11 @@ function update() {
     }
   }
 
-  // Brick collision
-  document.querySelectorAll(".brick").forEach((brick) => {
-    const brick_rect = brick.getBoundingClientRect();
-    const ball_rect = ball.getBoundingClientRect();
+  // Brick Collision - Ensures only one brick is hit
+  let bricks = document.querySelectorAll(".brick");
+  for (let brick of bricks) {
+    let brick_rect = brick.getBoundingClientRect();
+    let ball_rect = ball.getBoundingClientRect();
 
     if (
       ball_rect.left < brick_rect.right &&
@@ -229,13 +181,16 @@ function update() {
       ballDY *= -1;
       score += 10;
       score_display.textContent = score;
+      break; // Stop checking after the first hit
     }
-  });
+  }
 
+  // Update ball position
   ball.style.left = `${ball_x}px`;
   ball.style.top = `${ball_y}px`;
   requestAnimationFrame(update);
 }
+
 
 function update_lives(lost_lives) {
   const hearts = document.querySelectorAll(".heart");
