@@ -24,6 +24,7 @@ arrow_controls = false;
 let ball_stuck_to_paddle = true;
 let space_enabled = true;
 
+
 // === function create bricks for the game ===
 function create_bricks() {
   const rows = 6;
@@ -52,62 +53,69 @@ function create_bricks() {
   }
 }
 
-
-function create_bricks_level2() { 
+function create_bricks_level2() {
   // Clear any existing bricks first
-  const existingBricks = document.querySelectorAll('.brick');
-  existingBricks.forEach(brick => brick.remove());
-  
+  const existingBricks = document.querySelectorAll(".brick");
+  existingBricks.forEach((brick) => brick.remove());
+
   const brickWidth = 60;
   const brickHeight = 30;
   const spacing = 10;
-  
+
   // For a true hourglass shape
   const maxRows = 11; // Odd number works best for symmetry
   const maxBricksInRow = 15; // Maximum bricks in the top and bottom rows
-  
+
   // Calculate starting position to center the pattern
-  const startX = (game_container.clientWidth - maxBricksInRow * (brickWidth + spacing)) / 2;
+  const startX =
+    (game_container.clientWidth - maxBricksInRow * (brickWidth + spacing)) / 2;
   let currentY = 50; // Starting Y position
-  
+
   // Create hourglass pattern
   for (let row = 0; row < maxRows; row++) {
     // Calculate how many bricks should be in this row
     // For hourglass: start with max, decrease to min at middle, then increase back to max
     const middleRow = Math.floor(maxRows / 2);
     let bricksInThisRow;
-    
+
     if (row <= middleRow) {
       // Top half of hourglass (including middle) - decreasing width
-      bricksInThisRow = maxBricksInRow - (row * 2);
+      bricksInThisRow = maxBricksInRow - row * 2;
     } else {
       // Bottom half of hourglass - increasing width
-      bricksInThisRow = maxBricksInRow - ((maxRows - row - 1) * 2);
+      bricksInThisRow = maxBricksInRow - (maxRows - row - 1) * 2;
     }
-    
+
     // Calculate starting X position for this row to center it
-    const rowStartX = startX + ((maxBricksInRow - bricksInThisRow) * (brickWidth + spacing)) / 2;
-    
+    const rowStartX =
+      startX +
+      ((maxBricksInRow - bricksInThisRow) * (brickWidth + spacing)) / 2;
+
     // Create bricks for this row
     for (let col = 0; col < bricksInThisRow; col++) {
       const brick = document.createElement("div");
       brick.classList.add("brick");
-      
+      brick.hit = false;
+      brick.dataset.health = 1; //set default health
+
       // Position the brick
       brick.style.left = `${rowStartX + col * (brickWidth + spacing)}px`;
       brick.style.top = `${currentY}px`;
       brick.style.width = `${brickWidth}px`;
       brick.style.height = `${brickHeight}px`;
-      
+
       // Add some visual interest with different colors based on position
       const colorIndex = (row + col) % 5;
-      const colors = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#FF33F3'];
+      const colors = ["#ff0000", "#33FF57", "#3357FF", "#F3FF33", "#FF33F3"];
       brick.style.backgroundColor = colors[colorIndex];
+      if (colorIndex === 0) {
+        brick.dataset.health = 3;
+      }
       brick.style.border = "1px solid white";
-      
+
       game_container.appendChild(brick);
     }
-    
+
     // Move to the next row
     currentY += brickHeight + spacing;
   }
@@ -124,7 +132,7 @@ document.addEventListener("keydown", (e) => {
       arrow_controls = true;
       ball_stuck_to_paddle = false;
       ballDY = -3;
-      ballDX = -ballDX
+      ballDX = -ballDX;
     } else if (game_state === "playing") {
       game_state = "paused";
       arrow_controls = false;
@@ -236,11 +244,27 @@ function update() {
       ball_rect.top < brick_rect.bottom &&
       ball_rect.bottom > brick_rect.top
     ) {
-      brick.remove();
-      ballDY *= -1;
-      score += 10;
-      score_display.textContent = score;
-      break; // Stop checking after the first hit
+      if (!brick.hit) {
+        brick.hit=true
+        console.log(brick.dataset.health);
+        brick.dataset.health--;
+        if (brick.dataset.health <= 0) {
+          brick.remove();
+        } else {
+          // update brick's appearance based on its health
+          if (brick.health === 2) {
+            brick.style.opacity = 0.5;
+            brick.hit=false;
+          } else if (brick.health === 1) {
+            brick.style.opacity = 0.2;
+          }
+          
+        }
+        ballDY = -ballDY;
+        score += 10;
+        score_display.textContent = score;
+        break; // Stop checking after the first hit
+      }
     }
   }
 
@@ -249,7 +273,6 @@ function update() {
   ball.style.top = `${ball_y}px`;
   requestAnimationFrame(update);
 }
-
 
 function update_lives(lost_lives) {
   const hearts = document.querySelectorAll(".heart");
