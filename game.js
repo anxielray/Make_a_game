@@ -31,7 +31,7 @@ let playerName =""
 
 // === function create bricks for the game ===
 function create_bricks() {
-  const rows = 6;
+  const rows = 5;
   const col = 13;
   for (let i = 1; i < rows; i++) {
     for (let j = 1; j < col - 1; j++) {
@@ -67,8 +67,8 @@ function create_bricks_level2() {
   const spacing = 10;
 
   // For a true hourglass shape
-  const maxRows = 11; // Odd number works best for symmetry
-  const maxBricksInRow = 15; // Maximum bricks in the top and bottom rows
+  const maxRows = 5; // Odd number works best for symmetry
+  const maxBricksInRow = 7; // Maximum bricks in the top and bottom rows
 
   // Calculate starting position to center the pattern
   const startX =
@@ -135,7 +135,7 @@ document.addEventListener("keydown", (e) => {
     if (ball_stuck_to_paddle && game_state === "playing") {
       arrow_controls = true;
       ball_stuck_to_paddle = false;
-      ballDY = -3;
+      ballDY = -2.5;
       ballDX = -ballDX;
     } else if (game_state === "playing") {
       game_state = "paused";
@@ -149,7 +149,7 @@ document.addEventListener("keydown", (e) => {
     if (ball_stuck_to_paddle && game_state === "playing") {
       arrow_controls = true;
       ball_stuck_to_paddle = false;
-      ballDY = -3;
+      ballDY = -2.5;
       ballDX = Math.random() * 2 - 1;
       space_enabled = false;
     } else if (game_state === "playing") {
