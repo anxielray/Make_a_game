@@ -52,6 +52,66 @@ function create_bricks() {
   }
 }
 
+
+function create_bricks_level2() { 
+  // Clear any existing bricks first
+  const existingBricks = document.querySelectorAll('.brick');
+  existingBricks.forEach(brick => brick.remove());
+  
+  const brickWidth = 60;
+  const brickHeight = 30;
+  const spacing = 10;
+  
+  // For a true hourglass shape
+  const maxRows = 11; // Odd number works best for symmetry
+  const maxBricksInRow = 15; // Maximum bricks in the top and bottom rows
+  
+  // Calculate starting position to center the pattern
+  const startX = (game_container.clientWidth - maxBricksInRow * (brickWidth + spacing)) / 2;
+  let currentY = 50; // Starting Y position
+  
+  // Create hourglass pattern
+  for (let row = 0; row < maxRows; row++) {
+    // Calculate how many bricks should be in this row
+    // For hourglass: start with max, decrease to min at middle, then increase back to max
+    const middleRow = Math.floor(maxRows / 2);
+    let bricksInThisRow;
+    
+    if (row <= middleRow) {
+      // Top half of hourglass (including middle) - decreasing width
+      bricksInThisRow = maxBricksInRow - (row * 2);
+    } else {
+      // Bottom half of hourglass - increasing width
+      bricksInThisRow = maxBricksInRow - ((maxRows - row - 1) * 2);
+    }
+    
+    // Calculate starting X position for this row to center it
+    const rowStartX = startX + ((maxBricksInRow - bricksInThisRow) * (brickWidth + spacing)) / 2;
+    
+    // Create bricks for this row
+    for (let col = 0; col < bricksInThisRow; col++) {
+      const brick = document.createElement("div");
+      brick.classList.add("brick");
+      
+      // Position the brick
+      brick.style.left = `${rowStartX + col * (brickWidth + spacing)}px`;
+      brick.style.top = `${currentY}px`;
+      brick.style.width = `${brickWidth}px`;
+      brick.style.height = `${brickHeight}px`;
+      
+      // Add some visual interest with different colors based on position
+      const colorIndex = (row + col) % 5;
+      const colors = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#FF33F3'];
+      brick.style.backgroundColor = colors[colorIndex];
+      brick.style.border = "1px solid white";
+      
+      game_container.appendChild(brick);
+    }
+    
+    // Move to the next row
+    currentY += brickHeight + spacing;
+  }
+}
 // // === event listener to control the paddle movements ===
 document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft" && paddle_x > 0 && arrow_controls) {
@@ -64,8 +124,7 @@ document.addEventListener("keydown", (e) => {
       arrow_controls = true;
       ball_stuck_to_paddle = false;
       ballDY = -3;
-      ballDX = (Math.random() - 0.5) * 2;
-      space_enabled = false;
+      ballDX = -ballDX
     } else if (game_state === "playing") {
       game_state = "paused";
       arrow_controls = false;
@@ -269,7 +328,7 @@ new_game_button.addEventListener("click", () => {
   game_container.style.display = `block`;
   score_container.style.display = `block`;
   instructions_container.style.display = `block`;
-  create_bricks();
+  create_bricks_level2();
   update_lives();
   requestAnimationFrame(update);
   startCountdown();
