@@ -28,6 +28,9 @@ let gameTimer = 0;
 let timerInterval;
 let currentLevel = 1;
 let playerName = "";
+let leftPressed = false;
+let rightPressed = false;
+let paddleSpeed = 6;
 
 // === function create bricks for the game ===
 function create_bricks() {
@@ -124,13 +127,13 @@ function create_bricks_level2() {
     currentY += brickHeight + spacing;
   }
 }
+
 // // === event listener to control the paddle movements ===
 document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft" && paddle_x > 0 && arrow_controls) {
-    paddle_x -= Math.min(40, paddle_x); // Move left but stay in bounds
+  if (e.key === "ArrowLeft" && arrow_controls) {
+    leftPressed = true;
   } else if (e.key === "ArrowRight" && arrow_controls) {
-    let max_x = game_container.clientWidth - paddle.clientWidth;
-    paddle_x += Math.min(40, max_x - paddle_x); // Move right but stay in bounds
+    rightPressed = true;
   } else if (e.code === "Space" || e.key === "p") {
     if (ball_stuck_to_paddle && game_state === "playing") {
       arrow_controls = true;
@@ -145,30 +148,19 @@ document.addEventListener("keydown", (e) => {
       arrow_controls = true;
       resume_game();
     }
-  } else if (e.code === "Space" || e.key === "p") {
-    if (ball_stuck_to_paddle && game_state === "playing") {
-      arrow_controls = true;
-      ball_stuck_to_paddle = false;
-      ballDY = -2.7;
-      ballDX = Math.random() * 2 - 1;
-      space_enabled = false;
-    } else if (game_state === "playing") {
-      game_state = "paused";
-      arrow_controls = false;
-      pause_game();
-    } else if (game_state === "paused") {
-      arrow_controls = true;
-      resume_game();
-    }
-  }
-
-  if (e.code === "Escape" && !ball_stuck_to_paddle) {
+  } else if (e.code === "Escape" && !ball_stuck_to_paddle) {
     game_state = "paused";
     pause_game();
   }
-  paddle.style.left = `${paddle_x}px`;
 });
 
+document.addEventListener("keyup", (e) => {
+  if (e.key === "ArrowLeft") {
+    leftPressed = false;
+  } else if (e.key === "ArrowRight") {
+    rightPressed = false;
+  }
+});
 // ==== This is a function to pause the game ====
 function pause_game() {
   show_pause_menu();
@@ -198,6 +190,24 @@ function update() {
     arrow_controls = false;
     requestAnimationFrame(update);
     return;
+  }
+
+  // Handle paddle movement in the animation loop for smoothness
+  if (arrow_controls) {
+    if (leftPressed && paddle_x > 0) {
+      paddle_x -= paddleSpeed;
+      if (paddle_x < 0) paddle_x = 0; // Prevent going out of bounds
+    }
+    
+    if (rightPressed && paddle_x < game_container.clientWidth - paddle.clientWidth) {
+      paddle_x += paddleSpeed;
+      if (paddle_x > game_container.clientWidth - paddle.clientWidth) {
+        paddle_x = game_container.clientWidth - paddle.clientWidth; // Prevent going out of bounds
+      }
+    }
+    
+    // Update paddle position
+    paddle.style.left = `${paddle_x}px`;
   }
 
   if (ball_stuck_to_paddle) {
