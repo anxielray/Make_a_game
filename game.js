@@ -402,8 +402,10 @@ function animate() {
 new_game_button.addEventListener("click", () => {
   if (playerName === "") {
     playerName = prompt("Enter your name:").trim();
-    alert("Name is required to start the game.");
-    return;
+  }
+    if (!playerName){
+      alert("Name is required to start the game.");
+      return;
   }
   start_menu.classList.add("hidden");
   game_container.style.display = `block`;
