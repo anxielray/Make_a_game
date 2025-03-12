@@ -11,6 +11,19 @@ body {
 .pause-menu.hiddden {
   display: none;
 }
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #00ff00,
+                 0 0 20px #00ff00,
+                 0 0 30px #00ff00;
+  }
+  to {
+    text-shadow: 0 0 20px #00ff00,
+                 0 0 30px #00ff00,
+                 0 0 40px #00ff00;
+  }
+}
+
 
 .pause-menu.visible {
   display: block;
