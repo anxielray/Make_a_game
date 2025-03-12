@@ -127,10 +127,58 @@ function create_bricks_level2() {
 // // === event listener to control the paddle movements ===
 document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft" && paddle_x > 0 && arrow_controls) {
-    paddle_x -= Math.min(40, paddle_x); // Move left but stay in bounds
-  } else if (e.key === "ArrowRight" && arrow_controls) {
-    let max_x = game_container.clientWidth - paddle.clientWidth;
-    paddle_x += Math.min(40, max_x - paddle_x); // Move right but stay in bounds
+    let leftPressed = false;
+    let rightPressed = false;
+    const paddleSpeed = 2; // Adjust speed for smooth movement
+    let lastTime = 0;
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") leftPressed = true;
+      if (e.key === "ArrowRight") rightPressed = true;
+
+      // if (e.key === " " || e.key === "p") {
+      //   if (ball_stuck_to_paddle && game_state === "playing") {
+      //     arrow_controls = true;
+      //     ball_stuck_to_paddle = false;
+      //     ballDY = -2.7;
+      //     ballDX = Math.random() * 2 - 1;
+      //   } else if (game_state === "playing") {
+      //     arrow_controls = false;
+      //     game_state = "paused";
+      //     pause_game();
+      //   } else if (game_state === "paused") {
+      //     arrow_controls = true;
+      //     resume_game();
+      //   }
+      // }
+    });
+
+    document.addEventListener("keyup", (e) => {
+      if (e.key === "ArrowLeft") leftPressed = false;
+      if (e.key === "ArrowRight") rightPressed = false;
+    });
+
+    function updatePaddle(timestamp) {
+      if (!lastTime) lastTime = timestamp;
+      let deltaTime = (timestamp - lastTime) / 16.67;
+      lastTime = timestamp;
+
+      let max_x = game_container.clientWidth - paddle.clientWidth;
+      let moveAmount = paddleSpeed * deltaTime;
+
+      if (leftPressed && paddle_x > 0) {
+        paddle_x = Math.max(0, paddle_x - moveAmount);
+      }
+      if (rightPressed && paddle_x < max_x) {
+        paddle_x = Math.min(max_x, paddle_x + moveAmount);
+      }
+
+      paddle.style.left = `${paddle_x}px`;
+
+      requestAnimationFrame(updatePaddle);
+    }
+
+    updatePaddle();
   } else if (e.code === "Space" || e.key === "p") {
     if (ball_stuck_to_paddle && game_state === "playing") {
       arrow_controls = true;
@@ -403,9 +451,9 @@ new_game_button.addEventListener("click", () => {
   if (playerName === "") {
     playerName = prompt("Enter your name:").trim();
   }
-    if (!playerName){
-      alert("Name is required to start the game.");
-      return;
+  if (!playerName) {
+    alert("Name is required to start the game.");
+    return;
   }
   start_menu.classList.add("hidden");
   game_container.style.display = `block`;
