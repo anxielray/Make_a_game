@@ -373,7 +373,7 @@ function handleBrickCollision() {
 }
 
 function update_lives(lost_lives) {
-  const hearts = document.querySelectorAll(".heart");
+  let hearts = document.querySelectorAll(".heart");
   if (lost_lives === 0 || !lost_lives) {
     return;
   } else if (lost_lives === 3) {
@@ -573,7 +573,7 @@ function game_over() {
                         <th>Lives</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="leaderboard-body">
                     ${generateLeaderboardRows(scores)}
                 </tbody>
             </table>
@@ -592,17 +592,22 @@ function generateLeaderboardRows(scores) {
       return b.livesRemaining - a.livesRemaining;
     })
     .slice(0, 5)
-    .map(
-      (entry, index) => `
-            <tr class="${index === 0 ? "gold-rank" : ""}">
-                <td>${index + 1}</td>
-                <td>${entry.name}</td>
-                <td>${entry.score}</td>
-                <td>${Math.floor(entry.time / 60)}m ${entry.time % 60}s</td>
-                <td>${entry.livesRemaining}</td>
-            </tr>
-        `
-    )
+    .map((entry, index) => {
+      let rankClass = "";
+      if (index === 0) rankClass = "gold-rank";
+      else if (index === 1) rankClass = "silver-rank";
+      else if (index === 2) rankClass = "bronze-rank";
+
+      return `
+        <tr>
+            <td class="${rankClass}">${index + 1}</td>
+            <td>${entry.name}</td>
+            <td>${entry.score}</td>
+            <td>${Math.floor(entry.time / 60)}m ${entry.time % 60}s</td>
+            <td>${entry.livesRemaining}</td>
+        </tr>
+      `;
+    })
     .join("");
 }
 

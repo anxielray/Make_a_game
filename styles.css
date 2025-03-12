@@ -65,6 +65,57 @@ body {
   border-radius: 50%;
 }
 
+.game-button:hover {
+  background: rgba(0, 255, 255, 0.4);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+  transform: scale(1.1);
+}
+
+.paddle, .ball {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+}
+
+.game-menu h2 {
+  text-shadow: 0 0 8px cyan, 0 0 20px blue;
+}
+
+#pause-menu, .victory-overlay, .leaderboard-overlay {
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.paddle:active {
+  box-shadow: 0 0 15px cyan;
+}
+
+.gold-rank::before {
+  content: "🥇";
+  margin-right: 10px;
+}
+
+.silver-rank::before {
+  content: "🥈";
+  margin-right: 10px;
+}
+
+.bronze-rank::before {
+  content: "🥉";
+  margin-right: 10px;
+}
+
+
+.pause-menu {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.pause-menu.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+
 .brick {
   position: absolute;
   width: 55px;
