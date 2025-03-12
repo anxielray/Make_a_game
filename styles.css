@@ -1,7 +1,11 @@
 body {
-  text-align: center;
-  background-color: #222;
-  color: white;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  font-family: 'Arial', sans-serif;
 }
 
 .pause-menu.hiddden {
@@ -36,7 +40,7 @@ body {
 
 
 #game-container {
-  position: relative;
+  position:fixed;
   width: 900px;
   height: 700px;
   background-color: black;
@@ -194,8 +198,40 @@ body {
   display: none;
 }
 
-h1 {
+h1,h2 {
+   font-size: 4em;
+  margin-bottom: 30px;
+  text-shadow: 0 0 10px #00ff00,
+               0 0 20px #00ff00,
+               0 0 30px #00ff00;
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+.start{
+  display: none;
+}
+#new-game-button{
+  padding: 15px 40px;
+  font-size: 1.5em;
+  background: #00ff00;
+  border: none;
+  border-radius: 25px;
+  color: #1a1a2e;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#new-game-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px #00ff00;
+}
+
+#instruction, p{
+  margin-top: 40px;
   text-align: center;
+  font-size: 1.2em;
+  opacity: 0.8;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
 }
 
 #score-list {
