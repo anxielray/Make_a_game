@@ -338,9 +338,8 @@ function update_lives(lost_lives) {
 }
 
 function reset_ball() {
-  ball.style.left = `${
-    game_container.clientWidth / 2 - ball.clientWidth / 2
-  }px`;
+  ball.style.left = `${game_container.clientWidth / 2 - ball.clientWidth / 2
+    }px`;
   ball_y = 650;
   ballDX = 0;
   ballDY = 0;
@@ -403,9 +402,9 @@ new_game_button.addEventListener("click", () => {
   if (playerName === "") {
     playerName = prompt("Enter your name:").trim();
   }
-    if (!playerName){
-      alert("Name is required to start the game.");
-      return;
+  if (!playerName) {
+    alert("Name is required to start the game.");
+    return;
   }
   start_menu.classList.add("hidden");
   game_container.style.display = `block`;
@@ -508,9 +507,8 @@ function game_over() {
         <h2>Game Over, ${playerName}!</h2>
         <div class="game-stats">
             <p>Final Score: ${score}</p>
-            <p>Time Played: ${Math.floor(gameTimer / 60)}m ${
-    gameTimer % 60
-  }s</p>
+            <p>Time Played: ${Math.floor(gameTimer / 60)}m ${gameTimer % 60
+    }s</p>
             <p>Bricks Destroyed: ${score / 10}</p>
         </div>
         <div class="leaderboard-container">
@@ -544,18 +542,21 @@ function generateLeaderboardRows(scores) {
       return b.livesRemaining - a.livesRemaining;
     })
     .slice(0, 5)
-    .map(
-      (entry, index) => `
-            <tr class="${index === 0 ? "gold-rank" : ""}">
-                <td>${index + 1}</td>
-                <td>${entry.name}</td>
-                <td>${entry.score}</td>
-                <td>${Math.floor(entry.time / 60)}m ${entry.time % 60}s</td>
-                <td>${entry.livesRemaining}</td>
-            </tr>
-        `
-    )
-    .join("");
+    .map((entry, index) => {
+      let rankClass = "";
+      if (index === 0) rankClass = "gold-rank";
+      else if (index === 1) rankClass = "silver-rank";
+      else if (index === 2) rankClass = "bronze-rank";
+      return `
+        <tr>
+            <td class="${rankClass}">${index + 1}</td>
+            <td>${entry.name}</td>
+            <td>${entry.score}</td>
+            <td>${Math.floor(entry.time / 60)}m ${entry.time % 60}s</td>
+            <td>${entry.livesRemaining}</td>
+        </tr>
+      `;
+    }).join("");
 }
 
 function showVictoryScreen() {
@@ -587,9 +588,8 @@ function showVictoryScreen() {
         <div class="victory-content">
             <h1>🎉 Congratulations ${playerName}! 🎉</h1>
             <div class="victory-stats">
-                <p>You completed the game in ${Math.floor(gameTimer / 60)}m ${
-    gameTimer % 60
-  }s</p>
+                <p>You completed the game in ${Math.floor(gameTimer / 60)}m ${gameTimer % 60
+    }s</p>
                 <p>Final Score: ${score}</p>
                 <p>Lives Remaining: ${lives}</p>
             </div>
@@ -627,7 +627,7 @@ function showLeaderboard() {
                         <th>Lives</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="leaderboard-body">
                     ${generateLeaderboardRows(scores)}
                 </tbody>
             </table>
@@ -686,9 +686,8 @@ function createConfetti(parent) {
     [
       { transform: `translate(0, 0) rotate(0deg)` },
       {
-        transform: `translate(${Math.random() * 200 - 100}px, ${
-          window.innerHeight
-        }px) rotate(${Math.random() * 720}deg)`,
+        transform: `translate(${Math.random() * 200 - 100}px, ${window.innerHeight
+          }px) rotate(${Math.random() * 720}deg)`,
       },
     ],
     {
