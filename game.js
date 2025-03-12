@@ -12,6 +12,7 @@ const instructions_container = document.querySelector(".instructions");
 
 // ==== game initial status ===
 let paddle_x = game_container.clientWidth / 2 - paddle.clientWidth / 2;
+paddle.style.borderRadius = "19px";
 let ball_x = paddle_x / 2 - ball.clientWidth / 2,
   ball_y = 650,
   ballDX = 1.5,
@@ -25,9 +26,8 @@ let ball_stuck_to_paddle = true;
 let space_enabled = true;
 let gameTimer = 0;
 let timerInterval;
-let currentLevel = 1
-let playerName = ""
-
+let currentLevel = 1;
+let playerName = "";
 
 // === function create bricks for the game ===
 function create_bricks() {
@@ -135,7 +135,7 @@ document.addEventListener("keydown", (e) => {
     if (ball_stuck_to_paddle && game_state === "playing") {
       arrow_controls = true;
       ball_stuck_to_paddle = false;
-      ballDY = -2.5;
+      ballDY = -2.7;
       ballDX = -ballDX;
     } else if (game_state === "playing") {
       game_state = "paused";
@@ -149,7 +149,7 @@ document.addEventListener("keydown", (e) => {
     if (ball_stuck_to_paddle && game_state === "playing") {
       arrow_controls = true;
       ball_stuck_to_paddle = false;
-      ballDY = -2.5;
+      ballDY = -2.7;
       ballDX = Math.random() * 2 - 1;
       space_enabled = false;
     } else if (game_state === "playing") {
@@ -239,12 +239,12 @@ function handlePaddleCollision() {
     let hitPoint = (ball_x - paddle_x) / paddle.clientWidth;
 
     // Adjust ballDX based on hit point, keeping the speed constant
-    const maxAngle = Math.PI / 3; // 60 degrees
-    const angle = (hitPoint - 0.5) * maxAngle;
-    const speed = Math.sqrt(ballDX * ballDX + ballDY * ballDY);
-
-    ballDX = speed * Math.sin(angle);
-    ballDY = -speed * Math.cos(angle); // Ensure it bounces upwards
+    // const maxAngle = Math.PI / 3; // 60 degrees
+    const angle = (hitPoint - 0.5) * 3; //maxAngle;
+    // const speed = Math.sqrt(ballDX * ballDX + ballDY * ballDY);
+    ballDX = hitPoint + ballDX;
+    // ballDX = speed * Math.sin(angle);
+    // ballDY = -speed * Math.cos(angle); // Ensure it bounces upwards
   }
 
   if (ball_y >= game_container.clientHeight) {
@@ -278,7 +278,7 @@ function handleBrickCollision() {
       }
       // Decrease brick health
       let health = parseInt(brick.dataset.health || 1, 10);
-      console.log(health)
+      console.log(health);
       health--;
 
       // ===( Calculate the intersection depth )===
@@ -297,7 +297,6 @@ function handleBrickCollision() {
       } else {
         ballDY *= -1;
       }
-
 
       if (health <= 0) {
         // ===( Remove brick if health is zero )===
@@ -339,8 +338,9 @@ function update_lives(lost_lives) {
 }
 
 function reset_ball() {
-  ball.style.left = `${game_container.clientWidth / 2 - ball.clientWidth / 2
-    }px`;
+  ball.style.left = `${
+    game_container.clientWidth / 2 - ball.clientWidth / 2
+  }px`;
   ball_y = 650;
   ballDX = 0;
   ballDY = 0;
@@ -401,11 +401,9 @@ function animate() {
 // === startmenu===
 new_game_button.addEventListener("click", () => {
   if (playerName === "") {
-    playerName = prompt("Enter your name:");
-    if (!playerName) {
-      alert("Name is required to start the game.");
-      return;
-    }
+    playerName = prompt("Enter your name:").trim();
+    alert("Name is required to start the game.");
+    return;
   }
   start_menu.classList.add("hidden");
   game_container.style.display = `block`;
@@ -416,7 +414,7 @@ new_game_button.addEventListener("click", () => {
   update_lives();
   requestAnimationFrame(update);
   startCountdown();
-  currentLevel = 1
+  currentLevel = 1;
 });
 
 // === CountDown ===
@@ -464,11 +462,13 @@ function checkLevelCompletion() {
   if (bricks.length === 0) {
     if (currentLevel === 1) {
       transitionToLevel2();
-      currentLevel++
+      currentLevel++;
+      return;
     } else {
       showVictoryScreen();
+      return;
     }
-    // All bricks are cleared, move to the next level
+    //   // All bricks are cleared, move to the next level
   }
 }
 
@@ -506,8 +506,9 @@ function game_over() {
         <h2>Game Over, ${playerName}!</h2>
         <div class="game-stats">
             <p>Final Score: ${score}</p>
-            <p>Time Played: ${Math.floor(gameTimer / 60)}m ${gameTimer % 60
-    }s</p>
+            <p>Time Played: ${Math.floor(gameTimer / 60)}m ${
+    gameTimer % 60
+  }s</p>
             <p>Bricks Destroyed: ${score / 10}</p>
         </div>
         <div class="leaderboard-container">
@@ -584,8 +585,9 @@ function showVictoryScreen() {
         <div class="victory-content">
             <h1>🎉 Congratulations ${playerName}! 🎉</h1>
             <div class="victory-stats">
-                <p>You completed the game in ${Math.floor(gameTimer / 60)}m ${gameTimer % 60
-    }s</p>
+                <p>You completed the game in ${Math.floor(gameTimer / 60)}m ${
+    gameTimer % 60
+  }s</p>
                 <p>Final Score: ${score}</p>
                 <p>Lives Remaining: ${lives}</p>
             </div>
@@ -601,9 +603,9 @@ function showVictoryScreen() {
 
 function showLeaderboard() {
   clearAllOverlays();
-  const victoryContent = document.querySelector('.victory-content');
+  const victoryContent = document.querySelector(".victory-content");
   if (victoryContent) {
-    victoryContent.style.display = 'none';
+    victoryContent.style.display = "none";
   }
   const leaderboardOverlay = document.createElement("div");
   leaderboardOverlay.className = "leaderboard-overlay";
@@ -627,7 +629,7 @@ function showLeaderboard() {
                     ${generateLeaderboardRows(scores)}
                 </tbody>
             </table>
-            <button class="game-button" onclick="startMenu()">Close</button>
+            <button class="game-button" onclick="showLeaderboard()">Close</button>
         </div>
     `;
 
@@ -638,7 +640,7 @@ function clearAllOverlays() {
   const overlays = document.querySelectorAll(
     ".victory-overlay, .leaderboard-overlay"
   );
-  overlays.forEach((overlay) => overlay.style.display = "none");
+  overlays.forEach((overlay) => (overlay.style.display = "none"));
 }
 
 function restartGame() {
@@ -682,8 +684,9 @@ function createConfetti(parent) {
     [
       { transform: `translate(0, 0) rotate(0deg)` },
       {
-        transform: `translate(${Math.random() * 200 - 100}px, ${window.innerHeight
-          }px) rotate(${Math.random() * 720}deg)`,
+        transform: `translate(${Math.random() * 200 - 100}px, ${
+          window.innerHeight
+        }px) rotate(${Math.random() * 720}deg)`,
       },
     ],
     {
