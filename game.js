@@ -25,8 +25,8 @@ let ball_stuck_to_paddle = true;
 let space_enabled = true;
 let gameTimer = 0;
 let timerInterval;
-let currentLevel=1
-let playerName =""
+let currentLevel = 1
+let playerName = ""
 
 
 // === function create bricks for the game ===
@@ -261,10 +261,10 @@ function handlePaddleCollision() {
 
 function handleBrickCollision() {
   let bricks = document.querySelectorAll(".brick");
-  let ball_rect = ball.getBoundingClientRect();
 
   for (let brick of bricks) {
     let brick_rect = brick.getBoundingClientRect();
+    let ball_rect = ball.getBoundingClientRect();
 
     if (
       ball_rect.left < brick_rect.right &&
@@ -272,20 +272,38 @@ function handleBrickCollision() {
       ball_rect.top < brick_rect.bottom &&
       ball_rect.bottom > brick_rect.top
     ) {
-      // Check if the brick is on cooldown
+      // Check if the brick is on cooldown # relevant for the level 2 red-bricks
       if (brick.dataset.cooldown) {
-        continue; // Skip this brick if it's on cooldown
+        continue;
       }
-
-      
       // Decrease brick health
-      let health = parseInt(brick.dataset.health||1, 10);
+      let health = parseInt(brick.dataset.health || 1, 10);
       console.log(health)
       health--;
 
+      // ===( Calculate the intersection depth )===
+      let intersectX = Math.min(
+        ball_rect.right - brick_rect.left,
+        brick_rect.right - ball_rect.left
+      );
+      let intersectY = Math.min(
+        ball_rect.bottom - brick_rect.top,
+        brick_rect.bottom - ball_rect.top
+      );
+
+      // ===( Determine bounce direction based on smallest intersection )===
+      if (intersectX < intersectY) {
+        ballDX *= -1;
+      } else {
+        ballDY *= -1;
+      }
+
+
       if (health <= 0) {
-        // Remove brick if health is zero
+        // ===( Remove brick if health is zero )===
         brick.remove();
+        score += 10;
+        score_display.textContent = score;
       } else {
         // Update brick appearance based on remaining health
         brick.dataset.health = health;
@@ -295,23 +313,13 @@ function handleBrickCollision() {
           brick.style.opacity = 0.2;
         }
       }
+      brick.dataset.cooldown = true;
+      setTimeout(() => {
+        delete brick.dataset.cooldown;
+      }, 100);
 
-      // Reverse ball direction
-      ballDY = -ballDY;
-
-      // Update score
-      score += 10;
-      score_display.textContent = score;
-
-       // Set a cooldown for the brick
-       brick.dataset.cooldown = true;
-       setTimeout(() => {
-         delete brick.dataset.cooldown;
-       }, 100); // Cooldown period in milliseconds
-
-       // Check if level is complete
+      // ===( Check if level is complete )===
       checkLevelCompletion();
-      // Exit loop after handling collision
       break;
     }
   }
@@ -331,9 +339,8 @@ function update_lives(lost_lives) {
 }
 
 function reset_ball() {
-  ball.style.left = `${
-    game_container.clientWidth / 2 - ball.clientWidth / 2
-  }px`;
+  ball.style.left = `${game_container.clientWidth / 2 - ball.clientWidth / 2
+    }px`;
   ball_y = 650;
   ballDX = 0;
   ballDY = 0;
@@ -393,7 +400,7 @@ function animate() {
 
 // === startmenu===
 new_game_button.addEventListener("click", () => {
-  if (playerName===""){
+  if (playerName === "") {
     playerName = prompt("Enter your name:");
     if (!playerName) {
       alert("Name is required to start the game.");
@@ -405,10 +412,11 @@ new_game_button.addEventListener("click", () => {
   score_container.style.display = `block`;
   instructions_container.style.display = `block`;
   create_bricks();
+  reset_ball_paddle();
   update_lives();
   requestAnimationFrame(update);
   startCountdown();
-  currentLevel=1
+  currentLevel = 1
 });
 
 // === CountDown ===
@@ -454,10 +462,10 @@ function startMenu() {
 function checkLevelCompletion() {
   const bricks = document.querySelectorAll(".brick");
   if (bricks.length === 0) {
-    if (currentLevel===1){
+    if (currentLevel === 1) {
       transitionToLevel2();
       currentLevel++
-    }else{
+    } else {
       showVictoryScreen();
     }
     // All bricks are cleared, move to the next level
@@ -468,7 +476,7 @@ function checkLevelCompletion() {
 function transitionToLevel2() {
   alert("Level 1 Complete! Moving to Level 2...");
   reset_ball_paddle();
- 
+
   create_bricks_level2();
   game_state = "playing";
   requestAnimationFrame(update);
@@ -498,9 +506,8 @@ function game_over() {
         <h2>Game Over, ${playerName}!</h2>
         <div class="game-stats">
             <p>Final Score: ${score}</p>
-            <p>Time Played: ${Math.floor(gameTimer / 60)}m ${
-    gameTimer % 60
-  }s</p>
+            <p>Time Played: ${Math.floor(gameTimer / 60)}m ${gameTimer % 60
+    }s</p>
             <p>Bricks Destroyed: ${score / 10}</p>
         </div>
         <div class="leaderboard-container">
@@ -577,9 +584,8 @@ function showVictoryScreen() {
         <div class="victory-content">
             <h1>🎉 Congratulations ${playerName}! 🎉</h1>
             <div class="victory-stats">
-                <p>You completed the game in ${Math.floor(gameTimer / 60)}m ${
-    gameTimer % 60
-  }s</p>
+                <p>You completed the game in ${Math.floor(gameTimer / 60)}m ${gameTimer % 60
+    }s</p>
                 <p>Final Score: ${score}</p>
                 <p>Lives Remaining: ${lives}</p>
             </div>
@@ -597,7 +603,7 @@ function showLeaderboard() {
   clearAllOverlays();
   const victoryContent = document.querySelector('.victory-content');
   if (victoryContent) {
-      victoryContent.style.display = 'none';
+    victoryContent.style.display = 'none';
   }
   const leaderboardOverlay = document.createElement("div");
   leaderboardOverlay.className = "leaderboard-overlay";
@@ -632,7 +638,7 @@ function clearAllOverlays() {
   const overlays = document.querySelectorAll(
     ".victory-overlay, .leaderboard-overlay"
   );
-  overlays.forEach((overlay) => overlay.style.display="none");
+  overlays.forEach((overlay) => overlay.style.display = "none");
 }
 
 function restartGame() {
@@ -676,9 +682,8 @@ function createConfetti(parent) {
     [
       { transform: `translate(0, 0) rotate(0deg)` },
       {
-        transform: `translate(${Math.random() * 200 - 100}px, ${
-          window.innerHeight
-        }px) rotate(${Math.random() * 720}deg)`,
+        transform: `translate(${Math.random() * 200 - 100}px, ${window.innerHeight
+          }px) rotate(${Math.random() * 720}deg)`,
       },
     ],
     {
