@@ -133,8 +133,6 @@ document.addEventListener("keyup", debounce(keyUpHandler, 30));
 function create_bricks_level2() {
     // Clear any existing bricks first
     bricksCache = [];
-    const existingBricks = document.querySelectorAll(".brick");
-    existingBricks.forEach((brick) => brick.remove());
 
     const brickWidth = 60;
     const brickHeight = 30;
@@ -562,8 +560,8 @@ function startMenu() {
 }
 // Add a new function to check if all bricks are cleared
 function checkLevelCompletion() {
-    const bricks = document.querySelectorAll(".brick");
-    if (bricks.length === 0) {
+    // const bricks = document.querySelectorAll(".brick");
+    if (bricksCache.length === 0) {
         if (currentLevel === 1) {
             transitionToLevel2();
             currentLevel++;
