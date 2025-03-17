@@ -31,9 +31,23 @@ let playerName = "";
 let leftPressed = false;
 let rightPressed = false;
 let paddleSpeed = 6;
+let bricksCache = []
+
+function clearBricks() {
+    // Remove all brick elements from the game container
+    bricksCache.forEach(brick => {
+        if (brick.parentNode) {
+            brick.parentNode.removeChild(brick);
+        }
+    });
+    // Reset the cache
+    bricksCache = [];
+}
+
 
 // === function create bricks for the game ===
 function create_bricks() {
+    clearBricks();
     const rows = 5;
     const col = 13;
     for (let i = 1; i < rows; i++) {
@@ -54,6 +68,7 @@ function create_bricks() {
 
             brick.style.border = "1px solid white";
             game_container.appendChild(brick);
+            bricksCache.push(brick);
             game_container.style.alignItems = "center";
         }
     }
@@ -110,6 +125,7 @@ document.addEventListener("keyup", debounce(keyUpHandler, 30));
 
 function create_bricks_level2() {
     // Clear any existing bricks first
+    bricksCache = [];
     const existingBricks = document.querySelectorAll(".brick");
     existingBricks.forEach((brick) => brick.remove());
 
@@ -169,6 +185,7 @@ function create_bricks_level2() {
             brick.style.border = "1px solid white";
 
             game_container.appendChild(brick);
+            bricksCache.push(brick)
         }
 
         // Move to the next row
@@ -327,12 +344,19 @@ function handlePaddleCollision() {
 }
 
 function handleBrickCollision() {
-    let bricks = document.querySelectorAll(".brick");
+    // let bricks = document.querySelectorAll(".brick");
     const ballRect = ball.getBoundingClientRect();
     
-    for (let brick of bricks) {
-        const brickRect = brick.getBoundingClientRect();
+    for (let i=bricksCache.length-1;i>=0;i--) {
+        // const brickRect = brick.getBoundingClientRect();
+        const brick =bricksCache[i]
         // Cache brick properties
+        if (!document.body.contains(brick)) {
+            bricksCache.splice(i, 1);
+            i--; // Adjust the index after removal
+            continue;
+        }
+        const brickRect = brick.getBoundingClientRect();
 
         if (
             ballRect.left < brickRect.right &&
@@ -369,8 +393,10 @@ function handleBrickCollision() {
             if (health <= 0) {
                 // ===( Remove brick if health is zero )===
                 brick.remove();
+                bricksCache.splice(i,1);
                 score += 10;
                 score_display.textContent = score;
+                // i--
             } else {
                 // Update brick appearance based on remaining health
                 brick.dataset.health = health;
@@ -379,7 +405,7 @@ function handleBrickCollision() {
             brick.dataset.cooldown = true;
             setTimeout(() => {
                 delete brick.dataset.cooldown;
-            }, 1000);
+            }, 100);
 
             // ===( Check if level is complete )===
             checkLevelCompletion();
