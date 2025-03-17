@@ -179,6 +179,7 @@ function create_bricks_level2() {
             brick.style.top = `${currentY}px`;
             brick.style.width = `${brickWidth}px`;
             brick.style.height = `${brickHeight}px`;
+            brick.style.border = "1px solid white";
 
             // Add some visual interest with different colors based on position
             const colorIndex = (row + col) % 5;
@@ -187,7 +188,6 @@ function create_bricks_level2() {
             if (colorIndex === 0) {
                 brick.dataset.health = 3;
             }
-            brick.style.border = "1px solid white";
 
             game_container.appendChild(brick);
             bricksCache.push(brick)
@@ -282,8 +282,8 @@ function update() {
             }
         }
         // Update paddle position
-        paddle.style.left = `${paddle_x}px`;
-        // (paddle.style.transform = `translateX(${paddle_x}px)`)
+        // paddle.style.left = `${paddle_x}px`;
+        (paddle.style.transform = `translateX(${paddle_x}px)`)
     }
 
     if (ball_stuck_to_paddle) {
@@ -465,8 +465,8 @@ function reset_game() {
 // ===( Reset ball and paddle will reset the paddle and the ball on the starting position )=====
 function reset_ball_paddle() {
     paddle_x = game_container.clientWidth / 2 - paddle.clientWidth / 2;
-    paddle.style.left = `${paddle_x}px`;
-    // paddle.style.transform = `translateX(${paddle_x}px)`
+    // paddle.style.left = `${paddle_x}px`;
+    paddle.style.transform = `translateX(${paddle_x}px)`
     reset_ball();
 }
 
