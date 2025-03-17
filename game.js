@@ -32,6 +32,13 @@ let leftPressed = false;
 let rightPressed = false;
 let paddleSpeed = 6;
 let bricksCache = []
+let heartsCache = []
+
+function cacheHearts() {
+    // Convert NodeList to Array and store in the global cache
+    heartsCache = Array.from(document.querySelectorAll(".heart"));
+}
+
 
 function clearBricks() {
     // Remove all brick elements from the game container
@@ -415,7 +422,8 @@ function handleBrickCollision() {
 }
 
 function update_lives(lost_lives) {
-    const hearts = document.querySelectorAll(".heart");
+    cacheHearts();
+    // const hearts = document.querySelectorAll(".heart");
     if (lost_lives === 0 || !lost_lives) {
         return;
     } else if (lost_lives === 3) {
@@ -423,7 +431,9 @@ function update_lives(lost_lives) {
         return;
     }else if (lost_lives<3){
         for (let i = 0; i < lost_lives; i++) {
-            hearts[i].classList.add("lost");
+            if (heartsCache[i]){
+                heartsCache[i].classList.add("lost");
+            }
         }
     }
 }
@@ -579,6 +589,14 @@ function transitionToLevel2() {
 // === function to show the game over menu ===
 function game_over() {
     cancelAnimationFrame(animationFrameId)
+    clearInterval(timerInterval)
+    document.removeEventListener("keydown", debounce(keyDownHandler));
+    document.removeEventListener("keyup", debounce(keyUpHandler));
+
+    game_state = "over";
+    arrow_controls = false;
+    
+
     clearAllOverlays();
     start_menu.classList.add("hidden");
     game_container.style.display = "none";
