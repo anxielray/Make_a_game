@@ -9,6 +9,7 @@ const game_container = document.getElementById("game-container");
 const new_game_button = document.getElementById("new-game-button");
 const score_container = document.getElementById("score-container");
 const instructions_container = document.querySelector(".instructions");
+const game_controls = document.querySelector(".game_controls");
 
 // ==== game initial status ===
 let paddle_x = game_container.clientWidth / 2 - paddle.clientWidth / 2;
@@ -511,6 +512,7 @@ new_game_button.addEventListener("click", () => {
     game_container.style.display = `block`;
     score_container.style.display = `block`;
     instructions_container.style.display = `block`;
+    game_controls.style.display = `block`;
     create_bricks();
     reset_ball_paddle();
     update_lives();
@@ -557,6 +559,7 @@ function startMenu() {
     game_container.style.display = `none`;
     score_container.style.display = `none`;
     instructions_container.style.display = `none`;
+    game_controls.style.display = `none`;
 }
 // Add a new function to check if all bricks are cleared
 function checkLevelCompletion() {
@@ -600,6 +603,7 @@ function game_over() {
     game_container.style.display = "none";
     score_container.style.display = "block";
     instructions_container.style.display = "none";
+    game_controls.style.display = "none";
     game_state = "over";
     arrow_controls = false;
 
@@ -671,6 +675,7 @@ function showVictoryScreen() {
     clearAllOverlays();
     game_container.style.display = `none`;
     instructions_container.style.display = `none`;
+    game_controls.style.display = `none`;
 
     game_state = "victory";
     arrow_controls = false;

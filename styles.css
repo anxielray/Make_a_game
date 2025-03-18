@@ -5,7 +5,7 @@ body {
   align-items: center;
   min-height: 100vh;
   background: linear-gradient(135deg, #1a1a2e, #16213e);
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 .pause-menu.hiddden {
@@ -13,17 +13,12 @@ body {
 }
 @keyframes glow {
   from {
-    text-shadow: 0 0 10px #00ff00,
-                 0 0 20px #00ff00,
-                 0 0 30px #00ff00;
+    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
   }
   to {
-    text-shadow: 0 0 20px #00ff00,
-                 0 0 30px #00ff00,
-                 0 0 40px #00ff00;
+    text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00;
   }
 }
-
 
 .pause-menu.visible {
   display: block;
@@ -44,16 +39,15 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-} 
+}
 
 .pause-menu.header {
   padding: 1%;
   margin: 10%;
 }
 
-
 #game-container {
-  position:fixed;
+  position: fixed;
   width: 900px;
   height: 700px;
   background-color: black;
@@ -68,7 +62,7 @@ body {
   z-index: 999;
   width: 200px;
   height: 16px;
-  background-color: #062295 ;
+  background-color: #062295;
   border: 2px solid white;
   bottom: 12px;
 }
@@ -106,9 +100,19 @@ body {
 }
 
 .instructions {
-  /* display: none;  initilalily for the start of the game menu*/
   color: white;
   text-align: center;
+  padding: 10px;
+  position: relative;
+  left: 60px;
+}
+
+.game_controls {
+  position: fixed;
+  right: 23px;
+  color: white;
+  text-align: center;
+  font-family: "Courier New", Courier, monospace;
   padding: 10px;
 }
 
@@ -209,18 +213,17 @@ body {
   display: none;
 }
 
-h1,h2 {
-   font-size: 4em;
+h1,
+h2 {
+  font-size: 4em;
   margin-bottom: 30px;
-  text-shadow: 0 0 10px #00ff00,
-               0 0 20px #00ff00,
-               0 0 30px #00ff00;
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
   animation: glow 1.5s ease-in-out infinite alternate;
 }
-.start{
+.start {
   display: none;
 }
-#new-game-button{
+#new-game-button {
   padding: 15px 40px;
   font-size: 1.5em;
   background: #00ff00;
@@ -236,12 +239,13 @@ h1,h2 {
   box-shadow: 0 0 15px #00ff00;
 }
 
-#instruction, p{
+#instruction,
+p {
   margin-top: 40px;
   text-align: center;
   font-size: 1.2em;
   opacity: 0.8;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   font-weight: bold;
 }
 
@@ -261,6 +265,10 @@ h1,h2 {
   text-align: center;
 }
 
+.start-menu{
+  padding: 50px;
+}
+
 .back-button/* , #restart-button */ {
   display: block;
   margin: 20px auto;
@@ -274,80 +282,84 @@ h1,h2 {
   cursor: pointer;
 }
 
-.victory-overlay, .leaderboard-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+.victory-overlay,
+.leaderboard-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-.victory-content, .leaderboard-content {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 2rem;
-    border-radius: 15px;
-    text-align: center;
-    color: white;
-    max-width: 800px;
-    width: 90%;
+.victory-content,
+.leaderboard-content {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 15px;
+  text-align: center;
+  color: white;
+  max-width: 800px;
+  width: 90%;
 }
 
-.victory-stats, .game-stats {
-    margin: 20px 0;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+.victory-stats,
+.game-stats {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
 
 .leaderboard-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
 
 .leaderboard-table th,
 .leaderboard-table td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .leaderboard-table th {
-    background: rgba(255, 255, 255, 0.2);
-    font-weight: bold;
+  background: rgba(255, 255, 255, 0.2);
+  font-weight: bold;
 }
 
 .gold-rank {
-    background: rgba(255, 215, 0, 0.2);
+  background: rgba(255, 215, 0, 0.2);
 }
 
 .game-button {
-    padding: 10px 20px;
-    margin: 10px;
-    font-size: 18px;
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid white;
-    color: white;
-    border-radius: 5px;
-    transition: all 0.3s ease;
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  border-radius: 5px;
+  transition: all 0.3s ease;
 }
 
 .game-button:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
 }
 
-.victory-buttons, .game-controls {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
+.victory-buttons,
+.game-controls {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }

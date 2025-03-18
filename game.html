@@ -11,20 +11,39 @@
     <div id="start-menu" class="menu">
       <h2>Brick Breaker</h2>
       <div class="instruction">
-          <p>Use LEFT(⬅) and RIGHT(➡) arrows to  move the paddle</p>
-        <p>Break all bricks to win!</p>
-      </div>
+        <h3>🔥 Playful Motivation 🔥</h3>
+        <hr />
+        <p id="motivation-text">Can you beat the high score? 💪</p>
+        <h3>🏆 Leaderboard Inspiration</h3>
+        <hr />
+        <p>1st Place: The Brick Destroyer🏅</p>
+        <p>2nd Place: Paddle Master⚡</p>
+        <p>3rd Place: Speedy Striker🚀</p>
+      </div><br />
       <button id="new-game-button">New Game</button>
     </div>
     <div class="instructions">
-      Break All Bricks! Use ← → to Move
       <div id="lives-container">
         <span class="heart">❤️</span>
         <span class="heart">❤️</span>
         <span class="heart">❤️</span>
       </div>
-      <p>Score: <span id="score">0</span></p>
+      <p>Score: <span id="score" class="score">0</span></p>
     </div>
+
+    <div class="game_controls">
+      <h3>Game Controls 🎮</h3>
+      <hr />
+      <p>⬅ Move Left</p>
+      <br />
+      <p>➡ Move Right</p>
+      <br />
+      <p>⏸ Press SPACEBAR to Pause/Resume</p>
+      <br />
+      <p id="timer">⏳ Live Timer: 0</p>
+      <!-- <br /> -->
+    </div>
+
     <div id="game-container">
       <div class="paddle"></div>
       <div class="ball"></div>
@@ -38,20 +57,43 @@
         >
           Continue ▶️
         </button>
-        <button id="restart_button" onclick="location.reload()">Restart Ѻ</button>
+        <button id="restart_button" onclick="location.reload()">
+          Restart Ѻ
+        </button>
         <div id="score-container">
-          <p>Score: <span id="score"></span></p>
+          <p>Score: <span class="score"></span></p>
         </div>
-          
       </div>
     </div>
 
     <ul id="score-list">
       <!-- High scores will be populated here -->
     </ul>
-    
 
     <script src="game.js"></script>
   </body>
 </html>
 
+<!----
+
+  <div id="instructions-panel">
+      <h3>Game Controls 🎮</h3>
+      <ul>
+          <li>⬅ Move Left</li>
+          <li>➡ Move Right</li>
+          <li>⏸ Press SPACEBAR to Pause/Resume</li>
+          <li>⏳ Live Timer: <span id="timer">0</span></li>
+      </ul>
+      
+      <h3>🔥 Playful Motivation 🔥</h3>
+      <p id="motivation-text">Can you beat the high score? Keep going! 💪</p>
+      
+      <h3>🏆 Leaderboard Inspiration</h3>
+      <ul id="leaderboard">
+          <li>1st Place: The Brick Destroyer 🏅</li>
+          <li>2nd Place: Paddle Master ⚡</li>
+          <li>3rd Place: Speedy Striker 🚀</li>
+      </ul>
+  </div>
+
+-->
