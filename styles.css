@@ -125,8 +125,8 @@ body {
 .ball {
   position: absolute;
   z-index: 999;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   background-color: #00FFFF;
   border-radius: 50%;
   border-radius: 50%;
