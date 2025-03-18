@@ -213,6 +213,7 @@ document.addEventListener("keydown", (e) => {
             ballDX = -ballDX;
         } else if (game_state === "playing") {
             game_state = "paused";
+            toggleCursor(true);
             arrow_controls = false;
             pause_game();
         } else if (game_state === "paused") {
@@ -245,6 +246,7 @@ function pause_game() {
 // ==== This is a function to pause the game and display the pause menu ===
 function show_pause_menu() {
     game_state = "paused";
+    toggleCursor(true);
     arrow_controls = false;
     pause_menu.classList.replace("hidden", "visible");
 }
@@ -252,6 +254,7 @@ function show_pause_menu() {
 // ==== This is a function to resume the game from the pause menu ===
 function resume_game() {
     game_state = "playing";
+    toggleCursor(false);
     arrow_controls = true;
     hide_pause_menu();
 }
@@ -265,6 +268,7 @@ let animationFrameId = 0
 
 function update() {
     if (game_state === "paused") {
+        toggleCursor(true);
         arrow_controls = false;
         animationFrameId = requestAnimationFrame(update);
         return;
@@ -458,6 +462,7 @@ function reset_game() {
     update_lives(lost_lives);
     updateScore();
     game_state = "playing";
+    toggleCursor(false);
     arrow_controls = true;
     pause_menu.classList.replace("visible", "hidden");
     requestAnimationFrame(update);
@@ -479,6 +484,7 @@ function updateScore() {
 function start_game() {
     reset_game();
     game_state = "playing";
+    toggleCursor(false);
     arrow_controls = true;
     ball_stuck_to_paddle = true;
     animate();
@@ -645,6 +651,7 @@ function transitionToLevel2() {
 
     create_bricks_level2();
     game_state = "playing";
+    toggleCursor(false);
     requestAnimationFrame(update);
 }
 
@@ -832,6 +839,13 @@ function restartGame() {
 }
 
 document.addEventListener("DOMContentLoaded", startMenu);
+document.addEventListener("DOMContentLoaded", () => {
+    toggleCursor(false);
+});
+
+function toggleCursor(show) {
+    game_container.style.cursor = show ? "default" : "none";
+}
 
 // Keep this cleaner version at the end of the file and update it
 function updateTimer() {
