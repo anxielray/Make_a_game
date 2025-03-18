@@ -499,16 +499,42 @@ function animate() {
     }
 }
 
-// === startmenu===
-new_game_button.addEventListener("click", () => {
-    if (playerName === "") {
-        playerName = prompt("Enter your name:").trim();
-    }
-    if (!playerName){
-        alert("Name is required to start the game.");
-        return;
-    }
-    start_menu.classList.add("hidden");
+// === Create and Inject Modal into the HTML ===
+const modalHTML = `
+<div id="nameModal" class="modal-overlay">
+<div class="modal">
+<h2>Enter Your Name</h2>
+<input type="text" id="playerNameInput" placeholder="Enter your name..." autocomplete="off">
+<br><br>
+<button id="startGameBtn" class="btn">Start Game</button>
+<br><br>
+<a href="documentation.html" class="data-link" target="_blank">Why do we need your data?</a>
+</div>
+</div>
+`;
+document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+// Get modal elements
+const nameModal = document.getElementById("nameModal");
+const playerNameInput = document.getElementById("playerNameInput");
+const startGameBtn = document.getElementById("startGameBtn");
+
+/*
+
+*/
+// === Event Listener for "Start Game" Button in Modal ===
+startGameBtn.addEventListener("click", () => {
+    playerName = playerNameInput.value.trim();
+    
+    if (!playerName) return;
+    
+    nameModal.style.display = "none";
+    startGame();
+});
+
+// === Function to Start the Game ===
+function startGame() {
+    
     game_container.style.display = `block`;
     score_container.style.display = `block`;
     instructions_container.style.display = `block`;
@@ -519,6 +545,41 @@ new_game_button.addEventListener("click", () => {
     requestAnimationFrame(update);
     startCountdown();
     currentLevel = 1;
+}
+
+// === Create Data Privacy Modal ===
+const privacyModalHTML = `
+    <div id="privacyModal" class="modal-overlay">
+        <div class="modal">
+            <h2>Data Privacy Policy</h2>
+            <p>We value your privacy and do not store or share your personal data.</p>
+            <p>Any name entered is used only for in-game identification and is not collected or stored.</p>
+            <p>If you have concerns, contact us at <a href="mailto:anxielworld@gmail.com">Brick-breaker-creators</a>.</p>
+            <br>
+            <button id="closePrivacyBtn" class="btn">Close</button>
+        </div>
+    </div>
+`;
+document.body.insertAdjacentHTML("beforeend", privacyModalHTML);
+
+const privacyModal = document.getElementById("privacyModal");
+const closePrivacyBtn = document.getElementById("closePrivacyBtn");
+
+document.querySelector(".data-link").addEventListener("click", (event) => {
+    event.preventDefault();
+    privacyModal.style.display = "flex";
+});
+
+closePrivacyBtn.addEventListener("click", () => {
+    privacyModal.style.display = "none";
+});
+
+
+// === startmenu===
+new_game_button.addEventListener("click", () => {
+
+    start_menu.classList.add("hidden");
+    nameModal.style.display = "flex";
 });
 
 // === CountDown ===
