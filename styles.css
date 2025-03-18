@@ -338,7 +338,7 @@ p {
   text-align: center;
 }
 
-.back-button/* , #restart-button */ {
+.back-button {
   display: block;
   margin: 20px auto;
   padding: 10px 20px;
@@ -407,19 +407,6 @@ p {
 .gold-rank {
   background: rgba(255, 215, 0, 0.2);
 }
-
-/* .game-button {
-  background: linear-gradient(45deg, #ff3b3b, #ffcc00);
-  border: none;
-  padding: 12px 20px;
-  font-size: 1.2rem;
-  color: white;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 59, 59, 0.8);
-  transition: 0.3s ease-in-out;
-} */
 
 .victory-buttons,
 .game-controls {
@@ -561,49 +548,39 @@ p {
   transition: 0.3s ease-in-out;
 }
 
-/* .game-button:hover {
+/* .game-button {
+  background: linear-gradient(45deg, #ff3b3b, #ffcc00);
+  border: none;
+  padding: 12px 20px;
+  font-size: 1.2rem;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 59, 59, 0.8);
+  transition: 0.3s ease-in-out;
+}
+
+.game-button:hover {
   background: linear-gradient(45deg, #ffcc00, #ff3b3b);
   box-shadow: 0 0 20px rgba(255, 204, 0, 0.9);
   transform: scale(1.05);
-} */
-
-/* .game-button:active {
-  transform: scale(0.95);
-} */
-
-/* .brick.level1 {
-  width: 60px;
-  height: 20px;
-  margin: 5px;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
-  line-height: 20px;
-  color: white;
-  text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.8);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: inset 0px 0px 5px rgba(255, 255, 255, 0.2),
-    0px 0px 10px rgba(0, 0, 255, 0.8);
-  background: linear-gradient(45deg, #0000ff, #0044ff);
-  transition: 0.2s;
 }
 
-.brick:hover.level1 {
-  transform: scale(1.1);
-  box-shadow: 0px 0px 15px rgba(0, 0, 255, 1);
+.game-button:active {
+  transform: scale(0.95);
 } */
 
 .brick.level1 {
   width: 50px;
   height: 20px;
   margin: 5px;
-  background: #00ff00; /* Neon Green */
+  background: #00ff00;
   border-radius: 5px;
   box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
   transition: transform 0.1s, opacity 0.2s;
 }
 
-/* Brick.level1 animation when hit */
 .brick.level1.hit {
   opacity: 0.5;
   transform: scale(0.9);
