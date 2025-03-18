@@ -49,7 +49,7 @@ function clearBricks() {
   bricksCache = [];
 }
 
-// === The function will create bricks for the game ===
+// === The function will create bricks for the game in level 1 ===
 function create_bricks() {
   clearBricks();
   const rows = 5;
@@ -214,7 +214,7 @@ document.addEventListener("keyup", (e) => {
 let gameContainerWidth = game_container.clientWidth;
 let paddleWidth = paddle.clientWidth;
 
-// ==== This is a function to pause the game ====
+// ==== This is a function to call the function that handles pausing the game ====
 function pause_game() {
   show_pause_menu();
 }
@@ -261,7 +261,7 @@ function update() {
     ) {
       paddle_x += paddleSpeed;
       if (paddle_x > game_container.clientWidth - paddle.clientWidth) {
-        paddle_x = game_container.clientWidth - paddle.clientWidth; // Prevent going out of bounds
+        paddle_x = game_container.clientWidth - paddle.clientWidth;
       }
     }
     paddle.style.transform = `translateX(${paddle_x}px)`;
@@ -465,6 +465,7 @@ function reset_ball_paddle() {
 
 function updateScore() {
   document.getElementById("score").textContent = `Score: ${score}`;
+  pause_score.textContent = `Score: ${score}`;
 }
 
 // === function to start the game ===
@@ -479,10 +480,10 @@ function start_game() {
   clearInterval(timerInterval);
   timerInterval = setInterval(() => {
     if (game_state === "playing") {
-      gameTimer++;
+      gameTimer += 10;
       updateTimer();
     }
-  }, 15);
+  }, 10);
 }
 
 // === This is a function to animate the game ===
@@ -665,8 +666,8 @@ function game_over() {
         <h2>Game Over, ${playerName}!</h2>
         <div class="game-stats">
             <p>Final Score: ${score}</p>
-            <p>Time Played: ${Math.floor(gameTimer / 60)}m ${
-    gameTimer % 60
+            <p>Time Played: ${Math.floor(gameTimer / 60000)}m ${
+    gameTimer / 1000
   }s</p>
             <p>Bricks Destroyed: ${score / 10}</p>
         </div>
@@ -707,7 +708,7 @@ function generateLeaderboardRows(scores) {
                 <td>${index + 1}</td>
                 <td>${entry.name}</td>
                 <td>${entry.score}</td>
-                <td>${Math.floor(entry.time / 60)}m ${entry.time % 60}s</td>
+                <td>${Math.floor(entry.time / 60000)}m ${entry.time / 1000}s</td>
                 <td>${entry.livesRemaining}</td>
             </tr>
 `
@@ -742,8 +743,8 @@ function showVictoryScreen() {
         <div class="victory-content">
             <h1>🎉 Congratulations ${playerName}! 🎉</h1>
             <div class="victory-stats">
-                <p>You completed the game in ${Math.floor(gameTimer / 60)}m ${
-    gameTimer % 60
+                <p>You completed the game in ${Math.floor(gameTimer / 60000)}m ${
+    gameTimer / 1000
   }s</p>
                 <p>Final Score: ${score}</p>
                 <p>Lives Remaining: ${lives}</p>
@@ -815,8 +816,9 @@ function toggleCursor(show) {
 }
 
 function updateTimer() {
-  const minutes = Math.floor(gameTimer / 60);
-  const seconds = gameTimer % 60;
+  const totalSeconds = Math.floor(gameTimer / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
   document.getElementById("timer").textContent = `${minutes
     .toString()
     .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
