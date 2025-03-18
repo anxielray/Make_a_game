@@ -480,7 +480,7 @@ function start_game() {
       gameTimer++;
       updateTimer();
     }
-  }, 1);
+  }, 15);
 }
 
 // === This is a function to animate the game ===
