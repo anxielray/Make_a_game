@@ -222,6 +222,7 @@ document.addEventListener("keydown", (e) => {
         }
     } else if (e.code === "Escape" && !ball_stuck_to_paddle) {
         game_state = "paused";
+        toggleCursor(true);
         pause_game();
     }
 });
