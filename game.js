@@ -10,6 +10,7 @@ const new_game_button = document.getElementById("new-game-button");
 const score_container = document.getElementById("score-container");
 const instructions_container = document.querySelector(".instructions");
 const game_controls = document.querySelector(".game_controls");
+const pause_score = document.querySelector(".pause_score");
 
 // ==== game initial status ===
 let paddle_x = game_container.clientWidth / 2 - paddle.clientWidth / 2;
@@ -368,6 +369,7 @@ function handleBrickCollision() {
         bricksCache.splice(i, 1);
         score += 10;
         score_display.textContent = score;
+        pause_score.textContent = score;
       } else {
         brick.dataset.health = health;
         brick.style.opacity = health === 2 ? 0.5 : health === 1 ? 0.2 : 1;
