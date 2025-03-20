@@ -604,12 +604,14 @@ function startCountdown() {
 function startMenu() {
   clearAllOverlays();
   arrow_controls = false;
-  start_menu.classList.remove("hidden");
-  game_container.style.display = `none`;
-  score_container.style.display = `none`;
-  instructions_container.style.display = `none`;
-  game_controls.style.display = `none`;
+
+  requestAnimationFrame(() => {
+    start_menu.classList.remove("hidden");
+    [game_container, score_container, instructions_container, game_controls]
+      .forEach(el => el.style.display = "none");
+  });
 }
+
 // Add a new function to check if all bricks are cleared
 function checkLevelCompletion() {
   if (bricksCache.length === 0) {
