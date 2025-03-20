@@ -1,2 +1,4 @@
-*.qodo
-*.vscode
+.vscode
+.qodo
+TODO.md
+
