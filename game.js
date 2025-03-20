@@ -816,10 +816,11 @@ function restartGame() {
   startCountdown();
 }
 
-document.addEventListener("DOMContentLoaded", startMenu);
 document.addEventListener("DOMContentLoaded", () => {
+  startMenu();
   toggleCursor(false);
 });
+
 
 function toggleCursor(show) {
   game_container.style.cursor = show ? "default" : "none";
