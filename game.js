@@ -784,10 +784,20 @@ function showLeaderboard() {
                     ${generateLeaderboardRows(scores)}
                 </tbody>
             </table>
-            <button class="game-button" onclick="showLeaderboard()">Close</button>
+            <button class="game-button" onclick="close_victory_leaderboard()">Close</button>
         </div>
 `;
   document.body.appendChild(leaderboardOverlay);
+}
+
+//===( This is a function that will close the leaderboard overlay that the victor sees on game completion )====
+function close_victory_leaderboard(){
+  const leaderboardContent = document.querySelector(".leaderboard-content");
+  const victoryContent = document.querySelector(".victory-overlay");
+  if (leaderboardContent) {
+    leaderboardContent.style.display = "none";
+    showVictoryScreen();
+  }
 }
 
 function clearAllOverlays() {
