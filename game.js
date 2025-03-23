@@ -683,7 +683,7 @@ function game_over() {
                         <th>Lives</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="leaderboard-body">
                     ${generateLeaderboardRows(scores)}
                 </tbody>
             </table>
