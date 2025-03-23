@@ -236,10 +236,12 @@ body {
 }
 
 @keyframes bounce {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -636,4 +638,31 @@ p {
   opacity: 0.5;
   transform: scale(0.9);
   box-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00;
+}
+
+.gold-rank::before {
+  content: "🥇";
+  margin-right: 10px;
+}
+
+.silver-rank::before {
+  content: "🥈";
+  margin-right: 10px;
+}
+
+.bronze-rank::before {
+  content: "🥉";
+  margin-right: 10px;
+}
+
+
+.pause-menu {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.pause-menu.visible {
+  opacity: 1;
+  transform: scale(1);
 }

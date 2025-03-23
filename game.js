@@ -430,9 +430,8 @@ function update_lives(lost_lives) {
 }
 
 function reset_ball() {
-  ball.style.left = `${
-    game_container.clientWidth / 2 - ball.clientWidth / 2
-  }px`;
+  ball.style.left = `${game_container.clientWidth / 2 - ball.clientWidth / 2
+    }px`;
   ball_y = 650;
   ballDX = 0;
   ballDY = 0;
@@ -782,7 +781,7 @@ function showLeaderboard() {
                         <th>Lives</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="leaderboard-body">
                     ${generateLeaderboardRows(scores)}
                 </tbody>
             </table>
@@ -856,9 +855,8 @@ function createConfetti(parent) {
     [
       { transform: `translate(0, 0) rotate(0deg)` },
       {
-        transform: `translate(${Math.random() * 200 - 100}px, ${
-          window.innerHeight
-        }px) rotate(${Math.random() * 720}deg)`,
+        transform: `translate(${Math.random() * 200 - 100}px, ${window.innerHeight
+          }px) rotate(${Math.random() * 720}deg)`,
       },
     ],
     {
