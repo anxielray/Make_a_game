@@ -7,21 +7,49 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Brick Breaker</h1>
+    <h1 class="start">Brick Breaker</h1>
     <div id="start-menu" class="menu">
-      <h1>Welcome to the Game!</h1>
+      <h2>Brick Breaker</h2>
+      <div class="instruction">
+        <h3>🔥 Playful Motivation 🔥</h3>
+        <hr />
+        <p id="motivation-text">Can you beat the high score? 💪</p>
+        <h3>🏆 Leaderboard Inspiration</h3>
+        <hr />
+        <p>1st Place: The Brick Destroyer🏅</p>
+        <p>2nd Place: Paddle Master⚡</p>
+        <p>3rd Place: Speedy Striker🚀</p>
+      </div>
+      <br />
       <button id="new-game-button">New Game</button>
     </div>
     <div class="instructions">
-      Break All Bricks! Use ← → to Move
       <div id="lives-container">
         <span class="heart">❤️</span>
         <span class="heart">❤️</span>
         <span class="heart">❤️</span>
+      </div>
+      <p>Score: <span id="score" class="score">0</span></p>
+    </div>
+
+    <div class="game_controls">
+      <h3>Game Controls 🎮</h3>
+      <hr />
+      <p>⬅ Move Left</p>
+      <br />
+      <p>➡ Move Right</p>
+      <br />
+      <p>⏸ Press SPACEBAR to Start Game</p>
+      <br />
+      <p>⏸ Press SPACEBAR to Pause/Resume</p>
+      <br />
+      <p id="timer">⏳ Live Timer: 0</p>
+    </div>
+
     <div id="game-container">
       <div class="paddle"></div>
       <div class="ball"></div>
-      <div class="timer">Time: <span id="timer">0</span></div>
+      <div class="timer">Time: </div>
       <div class="pause-menu hidden">
         <h2>Paused</h2>
         <button
@@ -31,20 +59,17 @@
         >
           Continue ▶️
         </button>
-        <button id="restart_button" onclick="location.reload()">Restart Ѻ</button>
+        <button id="restart_button" onclick="location.reload()">
+          Restart Ѻ
+        </button>
         <div id="score-container">
-          <p>Score: <span id="score"></span></p>
+          <p>Score: <span class="pause_score">0</span></p>
         </div>
-          
       </div>
     </div>
 
-    <ul id="score-list">
-      <!-- High scores will be populated here -->
-    </ul>
-    
+    <div id="score-list"></div>
 
     <script src="game.js"></script>
   </body>
 </html>
-
